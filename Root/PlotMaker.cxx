@@ -209,17 +209,16 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   for(unsigned int i=0; i < m_systematicsList.size(); ++i) {
 
     // Retrieve the histograms
-    cout << "get histos for uncertainty " << m_systematicsList.at(i) << endl;
+
     getHistograms(m_inputROOTFile, observable, cut, sysHistograms, m_systematicsList.at(i), m_sampleList);
 
     // Loop over samples and add to total systematics histo
     for(unsigned int j=0; j < m_sampleList.size(); ++j) {
-      if(m_sampleList.at(j) != "Fakes" && (m_systematicsList.at(i).find("ELFR")==0 || m_systematicsList.at(i).find("ELRE")==0 || m_systematicsList.at(i).find("MUFR")==0 || m_systematicsList.at(i).find("MURE")==0)) continue;
-      
-      if(sysHistograms[j]!=NULL){
-        totalSysHisto->Add(sysHistograms[j]);
-	cout << "sys Integral= " << sysHistograms[j]->Integral() << endl;
+      if(m_sampleList.at(j) != "Fakes" && (m_systematicsList.at(i).find("ELFR")==0 || m_systematicsList.at(i).find("ELRE")==0 || m_systematicsList.at(i).find("MUFR")==0 || m_systematicsList.at(i).find("MURE")==0)){
+	continue;
       }
+      if(sysHistograms[j]!=NULL)
+        totalSysHisto->Add(sysHistograms[j]);
       else if ( m_sampleList.at(j) != "Data" && m_sampleList.at(j) != "Fakes" ) {
         cout << "PlotMaker::WARNING   Cannot find TTree for systematics " << 
                 m_systematicsList.at(i) << " for sample " << m_sampleList.at(j)  << endl;
@@ -257,8 +256,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     ylabel.Append(" GeV");
   TString xlabel = "";
 
-  if( variable.EqualTo("mT2") ) {
-    xlabel = "m_{T2} [GeV]";
+  if( variable.EqualTo("Ht") ) {
+    xlabel = "H_{T} [GeV]";
   }
   else if( variable.EqualTo("mlj") ) {
     xlabel = "m_{lj} [GeV]";
@@ -288,10 +287,11 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   histograms[dataIndex]->GetXaxis()->SetLabelOffset(1.2); 
   histograms[dataIndex]->GetXaxis()->SetLabelSize(0.03);
   histograms[dataIndex]->GetYaxis()->SetTitle(ylabel); 
-  histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,1000*pow(10,ceil(log(histograms[dataIndex]->GetMaximum())/log(10))));
+//   histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,1000*pow(10,ceil(log(histograms[dataIndex]->GetMaximum())/log(10))));
+    histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,histograms[dataIndex]->GetMaximum()*2);
 
   gPad->RedrawAxis();
-  gPad->SetLogy(1);
+//   gPad->SetLogy(1);
 
   // Decoration
   char annoyingLabel1[100] = "#bf{#it{ATLAS}} Internal", annoyingLabel2[100] = "#scale[0.6]{#int} L dt = 20.3 fb^{-1}  #sqrt{s} = 8 TeV";
@@ -362,24 +362,24 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   ratio         ->Draw("same && P");
   gPad          ->SetGridy(1);
 
-  TString plotName = channel + "_" + region + "_" + variable + "_unblinded.pdf" ;
+  TString plotName = channel + "_" + region + "_" + variable + ".pdf" ;
   //plotName = dirOut + "/" + plotName;
   canvas->SaveAs(plotName);
 
   // Delete unnecessary stuff to open up memory
   //delete[] histograms;
   //delete[] sysHistograms;
-  delete Data;
-  delete mcStack;
-  delete nominalAsymErrors;
-  delete nominalAsymErrorsNoError;
-  delete ratioBand;
-  delete ratio_original;
-  delete ratio_raw;
-  delete ratio;
-  delete totalSysHisto;
-  delete legend;
-  delete canvas;
+//   delete Data;
+//   delete mcStack;
+//   delete nominalAsymErrors;
+//   delete nominalAsymErrorsNoError;
+//   delete ratioBand;
+//   delete ratio_original;
+//   delete ratio_raw;
+//   delete ratio;
+//   delete totalSysHisto;
+//   delete legend;
+//   delete canvas;
 
   return;
 }
@@ -522,15 +522,15 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
       if(inputList.at(i) == "Data"){
 	if(cutToApply.Contains("L2nCentralLightJets==2")==1){
 	  if(m_converToGeV)
-	    tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply/* + "&& mljj>120000."*/);
+	    tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply + "&& mljj>120000.");
 	  else
-	    tree->Draw( varToPlot + ">>temp"       , weight + cutToApply/* + "&& mljj>120000."*/);
+	    tree->Draw( varToPlot + ">>temp"       , weight + cutToApply + "&& mljj>120000.");
 	}
 	else{
 	if(m_converToGeV)
-	  tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply/* + "&& mlj>90000."*/);
+	  tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply + "&& mlj>90000.");
 	else
-	  tree->Draw( varToPlot + ">>temp"       , weight + cutToApply/* + "&& mlj>90000."*/);
+	  tree->Draw( varToPlot + ">>temp"       , weight + cutToApply + "&& mlj>90000.");
 	}
       }
       else{

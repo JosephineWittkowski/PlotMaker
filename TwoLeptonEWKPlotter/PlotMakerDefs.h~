@@ -70,8 +70,8 @@ ColorMap SampleColors = boost::assign::map_list_of ("Data"  , (int)kBlack    )
                                                    ("Zjets" , (int)kOrange-2 )
                                                    ("ZV"    , (int)kSpring+1 )
                                                    ("Higgs" , (int)kYellow-9 )
-                                                   ("Fakes" , (int)kGray     )
-						   ("130.0_0.0", (int)kPink+7);
+                                                   ("Fakes" , (int)kGray     );
+// 						   ("130.0_0.0", (int)kPink+7);
 
 /// \brief Sample Names
 TS2TSMap SampleNames = boost::assign::map_list_of ("Data"  , "Data 2012"    )
@@ -85,7 +85,7 @@ TS2TSMap SampleNames = boost::assign::map_list_of ("Data"  , "Data 2012"    )
 
 
 /// \brief Define the variables
-TS2TSMap VariableNames = boost::assign::map_list_of ("mT2"   , "MT2"         )
+TS2TSMap VariableNames = boost::assign::map_list_of ("HT"   , "HT"         )
                                                     ("mll"   , "L2Mll"       )
                                                     ("metRel", "L2METrel"    )
                                                     ("ptl1"  , "lept1Pt"     )

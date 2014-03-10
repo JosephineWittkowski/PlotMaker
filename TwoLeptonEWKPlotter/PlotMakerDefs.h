@@ -85,7 +85,7 @@ TS2TSMap SampleNames = boost::assign::map_list_of ("Data"  , "Data 2012"    )
 
 
 /// \brief Define the variables
-TS2TSMap VariableNames = boost::assign::map_list_of ("mT2"   , "MT2"         )
+TS2TSMap VariableNames = boost::assign::map_list_of ("Ht"   , "Ht"         )
                                                     ("mll"   , "L2Mll"       )
                                                     ("metRel", "L2METrel"    )
                                                     ("ptl1"  , "lept1Pt"     )
