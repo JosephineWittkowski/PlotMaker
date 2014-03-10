@@ -15,12 +15,12 @@ int main(int argc, char** argv)
 {
   // Read user inputs
   string channels     = "none"                               ; vector<string> channelList   ;
-  string regions      = "SR_1j,SR_1jNOmlj,SR_1jNOmljNOHt,SR_23j,SR_23jNOmljj,SR_23jNOmljjNOHt"; vector<string> regionList    ;
+  string regions      = "SR_1jNOmlj,SR_23jNOmljj"; vector<string> regionList    ;
   string variables    = "mlj,mljj"                              ; vector<string> variableList  ;
   string samples      = "Fakes,Zjets,Top,ZV,WW,Higgs,Data"; vector<string> sampleList    ;
   string signal       = "130.0_0.0"			    ; vector<string> signalList;
   string binValues    = "20,0,200"                         ; vector<string> binValueList  ;
-  string systematics  = "MUREUP,EERDOWN,EERUP,EESLOWDOWN,EESLOWUP,EESMATDOWN,EESMATUP,EESPSDOWN,EESPSUP,EESZDOWN,EESZUP,IDDOWN,IDUP,JESDOWN,JESUP,MSDOWN,MSUP,RESOST,SCALESTDOWN,SCALESTUP,ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN"; 
+  string systematics  = "MUREUP"; 
   vector<string> systematicList;
 //   "MUREUP,EERDOWN,EERUP,EESLOWDOWN,EESLOWUP,EESMATDOWN,EESMATUP,EESPSDOWN,EESPSUP,EESZDOWN,EESZUP,IDDOWN,IDUP,JESDOWN,JESUP,MSDOWN,MSUP,RESOST,SCALESTDOWN,SCALESTUP,ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN"
 //   "SR_EE_1j,SR_EE_23j,SR_MM_1j,SR_MM_23j,SR_EM_1j,SR_EM_23j"
@@ -74,8 +74,8 @@ int main(int argc, char** argv)
 
   // Plot and Save
   PlotMaker* plots = new PlotMaker();
-  plots->setInputFile("/data/etp/jwittkowski/hft_processed_Mar_04/Processed/SSBG8TeV.root");
-  plots->setInputFileSignal("/data/etp/jwittkowski/hft_processed_Mar_04/Processed/SSWH8TeV.root");
+  plots->setInputFile("/data/etp/jwittkowski/hft_processed_Mar_08/Processed/SSBG8TeV.root");
+  plots->setInputFileSignal("/data/etp/jwittkowski/hft_processed_Mar_08/Processed/SSWH8TeV.root");
   plots->setSignalList     (signalList    );
   plots->setSampleList     (sampleList    );
   plots->setSystematicsList(systematicList);

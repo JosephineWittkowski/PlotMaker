@@ -247,7 +247,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   histograms[dataIndex]->Draw("p");
   mcStack              ->Draw("hists same");
   nominalAsymErrors    ->Draw("same && E2");
-//   Data                 ->Draw("same && p");
+  Data                 ->Draw("same && p");
   histograms_signal[0]->Draw("hists same");
   legend               ->Draw();
 
@@ -360,10 +360,10 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   ratio_original->Draw();
   ratioBand     ->Draw("same && E2");
   line          ->Draw();
-//   ratio         ->Draw("same && P");
+  ratio         ->Draw("same && P");
   gPad          ->SetGridy(1);
 
-  TString plotName = channel + "_" + region + "_" + variable + ".pdf" ;
+  TString plotName = channel + "_" + region + "_" + variable + "_unblinded.pdf" ;
   //plotName = dirOut + "/" + plotName;
   canvas->SaveAs(plotName);
 
@@ -460,11 +460,10 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
     // Define variables internal to the loop
     TString treeName = "";
     if(inputList == m_sampleList){
-      if(variation.Contains("wsys")==0)  treeName = ""; treeName.Form("%s_",inputList.at(i).c_str()); treeName += variation;
+      if(variation.Contains("wsys")==0) treeName.Form("%s_",inputList.at(i).c_str()); treeName += variation;
       //if variation contains wsys, use CENTRAL tree
       if(variation.Contains("wsys")==1){
 	treeName = ""; treeName.Form("%s_",inputList.at(i).c_str()); treeName += "CENTRAL";
-  //       treeName = "Higgs_CENTRAL";
       }
     }
     else{
@@ -521,12 +520,30 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
       
       
       
-      
-    
-    if(m_converToGeV)
-      tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply );
-    else
-      tree->Draw( varToPlot + ">>temp"       , weight + cutToApply);
+      if(inputList.at(i) == "Data"){
+	cout << "cutToApply= " << cutToApply << endl;
+	cout << "cutToApply.Contains = " << cutToApply.Contains("L2nCentralLightJets==2") << endl;
+	if(cutToApply.Contains("L2nCentralLightJets==2")==1){
+	  cout << "Data, mljj>120000. cut in addition" << endl;
+	  if(m_converToGeV)
+	    tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply);
+	  else
+	    tree->Draw( varToPlot + ">>temp"       , weight + cutToApply);
+	}
+	else{
+	cout << "Data, mljj>120000. cut in addition" << endl;
+	if(m_converToGeV)
+	  tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply);
+	else
+	  tree->Draw( varToPlot + ">>temp"       , weight + cutToApply);
+	}
+      }
+      else{
+	if(m_converToGeV)
+	  tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply );
+	else
+	  tree->Draw( varToPlot + ">>temp"       , weight + cutToApply);
+      }
 
     // Clone and beautify
     histos[i] = (TH1D*) temp->Clone();

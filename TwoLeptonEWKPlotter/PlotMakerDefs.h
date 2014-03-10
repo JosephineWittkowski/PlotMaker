@@ -81,7 +81,7 @@ TS2TSMap SampleNames = boost::assign::map_list_of ("Data"  , "Data 2012"    )
                                                   ("ZV"    , "ZV"           )
                                                   ("Higgs" , "Higgs"        )
                                                   ("Fakes" , "Fake leptons" )
-						  ("signal1", "(m_{#tilde{#chi}_{2}^{0}} = m_{#tilde{#chi}_{1}^{#pm}, #tilde{#chi}_{1}^{0}}) = (130,0) GeV");
+						  ("signal1", "(m_{#tilde{#chi}_{2}^{0}},m_{#tilde{#chi}_{1}^{#pm}, #tilde{#chi}_{1}^{0}}) = (130,0) GeV");
 
 
 /// \brief Define the variables

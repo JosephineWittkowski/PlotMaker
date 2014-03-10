@@ -55,7 +55,7 @@ TS2TSMap RegionCuts = boost::assign::map_list_of
 
 ("SR_1jNOmljNOHt"      , "*( ((!isOS || L2qFlipWeight!=1.0) && isEE   && L2nCentralLightJets==1 && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) & L2METrel>55000. ) || ((!isOS || L2qFlipWeight!=1.0) && isMUMU && L2nCentralLightJets==1 && lept1Pt>30000. && lept2Pt>20000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && mtmax>100000.) || ((!isOS || L2qFlipWeight!=1.0) && isEMU  && L2nCentralLightJets==1 && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && mtmax>110000.))")
 
-("SR_23jNOmljj"      , "*( ((!isOS || L2qFlipWeight!=1.0) && isEE   && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) && L2METrel>30000. && mtmax>100000.) || ((!isOS || L2qFlipWeight!=1.0) && isMUMU && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && Ht>220000.) || ((!isOS || L2qFlipWeight!=1.0) && isEMU  && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && mtllmet>110000.) )");
+("SR_23jNOmljj"      , "*( ((!isOS || L2qFlipWeight!=1.0) && isEE   && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) && L2METrel>30000. && mtmax>100000.) || ((!isOS || L2qFlipWeight!=1.0) && isMUMU && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && Ht>220000.) || ((!isOS || L2qFlipWeight!=1.0) && isEMU  && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && mtllmet>110000.) )")
 
 ("SR_23jNOmljjNOHt"      , "*( ((!isOS || L2qFlipWeight!=1.0) && isEE   && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) && L2METrel>30000.) || ((!isOS || L2qFlipWeight!=1.0) && isMUMU && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5)) || ((!isOS || L2qFlipWeight!=1.0) && isEMU  && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5)) )");
 
@@ -70,8 +70,8 @@ ColorMap SampleColors = boost::assign::map_list_of ("Data"  , (int)kBlack    )
                                                    ("Zjets" , (int)kOrange-2 )
                                                    ("ZV"    , (int)kSpring+1 )
                                                    ("Higgs" , (int)kYellow-9 )
-                                                   ("Fakes" , (int)kGray     );
-// 						   ("130.0_0.0", (int)kPink+7);
+                                                   ("Fakes" , (int)kGray     )
+						   ("130.0_0.0", (int)kPink+7);
 
 /// \brief Sample Names
 TS2TSMap SampleNames = boost::assign::map_list_of ("Data"  , "Data 2012"    )
@@ -81,7 +81,7 @@ TS2TSMap SampleNames = boost::assign::map_list_of ("Data"  , "Data 2012"    )
                                                   ("ZV"    , "ZV"           )
                                                   ("Higgs" , "Higgs"        )
                                                   ("Fakes" , "Fake leptons" )
-						  ("signal1", "(m_{#tilde{#chi}_{2}^{0}} = m_{#tilde{#chi}_{1}^{#pm}, #tilde{#chi}_{1}^{0}}) = (130,0) GeV");
+						  ("signal1", "(m_{#tilde{#chi}_{2}^{0}},m_{#tilde{#chi}_{1}^{#pm}, #tilde{#chi}_{1}^{0}}) = (130,0) GeV");
 
 
 /// \brief Define the variables
