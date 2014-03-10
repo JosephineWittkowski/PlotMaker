@@ -1,0 +1,98 @@
+#ifndef REGIONCUTS_H
+#define REGIONCUTS_H
+
+#include <map>
+#include "boost/assign.hpp"
+#include "TString.h"
+#include "Rtypes.h"
+
+using namespace std;
+
+typedef map<TString, TString> TS2TSMap;
+typedef map<TString, int>     ColorMap;
+
+/// \brief Region Cut Definitions
+TS2TSMap RegionCuts = boost::assign::map_list_of 
+("SR_EE_play"  , "*(isEE)") 
+
+("SR_EE_1j"    , "*((!isOS || L2qFlipWeight!=1.0) && isEE   && L2nCentralLightJets==1 && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) & L2METrel>55000. && mlj<90000. && Ht>200000.)")
+
+("SR_EE_1jNOmlj"    , "*((!isOS || L2qFlipWeight!=1.0) && isEE   && L2nCentralLightJets==1 && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) & L2METrel>55000. && Ht>200000.)")
+
+("SR_EE_1jNOmljNOHt"    , "*((!isOS || L2qFlipWeight!=1.0) && isEE   && L2nCentralLightJets==1 && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) & L2METrel>55000.)")
+
+("SR_EE_23j"    , "*((!isOS || L2qFlipWeight!=1.0) && isEE   && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) && L2METrel>30000. && mljj<120000. && mtmax>100000.)")
+
+("SR_EE_23jNOmljj"    , "*((!isOS || L2qFlipWeight!=1.0) && isEE   && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) && L2METrel>30000. && mtmax>100000.)")
+
+("SR_EE_23jNOmljjNOmtmax"    , "*((!isOS || L2qFlipWeight!=1.0) && isEE   && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) && L2METrel>30000.)")
+
+("SR_MM_1j"     , "*((!isOS || L2qFlipWeight!=1.0) && isMUMU && L2nCentralLightJets==1 && lept1Pt>30000. && lept2Pt>20000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && mlj<90000. && Ht>200000. && mtmax>100000.)")
+
+("SR_MM_1jNOmlj"     , "*((!isOS || L2qFlipWeight!=1.0) && isMUMU && L2nCentralLightJets==1 && lept1Pt>30000. && lept2Pt>20000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && Ht>200000. && mtmax>100000.)")
+
+("SR_MM_1jNOmljNOHt"     , "*((!isOS || L2qFlipWeight!=1.0) && isMUMU && L2nCentralLightJets==1 && lept1Pt>30000. && lept2Pt>20000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && mtmax>100000.)")
+
+("SR_MM_23j", "*((!isOS || L2qFlipWeight!=1.0) && isMUMU && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && mljj<120000. && Ht>220000.)")
+
+("SR_MM_23jNOmljj", "*((!isOS || L2qFlipWeight!=1.0) && isMUMU && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && Ht>220000.)")
+
+("SR_MM_23jNOmljjNOHt", "*((!isOS || L2qFlipWeight!=1.0) && isMUMU && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5))")
+
+("SR_EM_1j", "*((!isOS || L2qFlipWeight!=1.0) && isEMU  && L2nCentralLightJets==1 && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && mlj<90000. && mtllmet>120000. && mtmax>110000.)")
+
+("SR_EM_1jNOmlj", "*((!isOS || L2qFlipWeight!=1.0) && isEMU  && L2nCentralLightJets==1 && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && mtllmet>120000. && mtmax>110000.)")
+
+("SR_EM_1jNOmljNOmtww", "*((!isOS || L2qFlipWeight!=1.0) && isEMU  && L2nCentralLightJets==1 && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && mtmax>110000.)")
+
+("SR_EM_23j"      , "*((!isOS || L2qFlipWeight!=1.0) && isEMU  && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && mljj<120000. && mtllmet>110000.)")
+
+("SR_EM_23jNOmljj"      , "*((!isOS || L2qFlipWeight!=1.0) && isEMU  && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && mtllmet>110000.)")
+
+("SR_EM_23jNOmljjNomtww"      , "*((!isOS || L2qFlipWeight!=1.0) && isEMU  && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) )")
+
+("SR_1jNOmlj"      , "*( ((!isOS || L2qFlipWeight!=1.0) && isEE   && L2nCentralLightJets==1 && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) & L2METrel>55000. && Ht>200000.) || ((!isOS || L2qFlipWeight!=1.0) && isMUMU && L2nCentralLightJets==1 && lept1Pt>30000. && lept2Pt>20000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && Ht>200000. && mtmax>100000.) || ((!isOS || L2qFlipWeight!=1.0) && isEMU  && L2nCentralLightJets==1 && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && mtllmet>120000. && mtmax>110000.))")
+
+("SR_1jNOmljNOHt"      , "*( ((!isOS || L2qFlipWeight!=1.0) && isEE   && L2nCentralLightJets==1 && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) & L2METrel>55000. ) || ((!isOS || L2qFlipWeight!=1.0) && isMUMU && L2nCentralLightJets==1 && lept1Pt>30000. && lept2Pt>20000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && mtmax>100000.) || ((!isOS || L2qFlipWeight!=1.0) && isEMU  && L2nCentralLightJets==1 && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && mtmax>110000.))")
+
+("SR_23jNOmljj"      , "*( ((!isOS || L2qFlipWeight!=1.0) && isEE   && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) && L2METrel>30000. && mtmax>100000.) || ((!isOS || L2qFlipWeight!=1.0) && isMUMU && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && Ht>220000.) || ((!isOS || L2qFlipWeight!=1.0) && isEMU  && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && mtllmet>110000.) )")
+
+("SR_23jNOmljjNOHt"      , "*( ((!isOS || L2qFlipWeight!=1.0) && isEE   && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) && L2METrel>30000.) || ((!isOS || L2qFlipWeight!=1.0) && isMUMU && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5)) || ((!isOS || L2qFlipWeight!=1.0) && isEMU  && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5)) )");
+
+
+
+
+
+/// \brief Sample Colors
+ColorMap SampleColors = boost::assign::map_list_of ("Data"  , (int)kBlack    )
+                                                   ("ttst"  , (int)kRed+1    )
+                                                   ("WW"    , (int)kAzure+4  )
+                                                   ("Zjets" , (int)kOrange-2 )
+                                                   ("ZV"    , (int)kSpring+1 )
+                                                   ("Higgs" , (int)kYellow-9 )
+                                                   ("Fakes" , (int)kGray     );
+// 						   ("130.0_0.0", (int)kPink+7);
+
+/// \brief Sample Names
+TS2TSMap SampleNames = boost::assign::map_list_of ("Data"  , "Data 2012"    )
+                                                  ("ttst"  , "t#bar{t} + Wt")
+                                                  ("WW"    , "WW"           )
+                                                  ("Zjets" , "Z+jets"       )
+                                                  ("ZV"    , "ZV"           )
+                                                  ("Higgs" , "Higgs"        )
+                                                  ("Fakes" , "Fake leptons" )
+						  ("signal1", "(m_{#tilde{#chi}_{2}^{0}} = m_{#tilde{#chi}_{1}^{#pm}, #tilde{#chi}_{1}^{0}}) = (130,0) GeV");
+
+
+/// \brief Define the variables
+TS2TSMap VariableNames = boost::assign::map_list_of ("mT2"   , "MT2"         )
+                                                    ("mll"   , "L2Mll"       )
+                                                    ("metRel", "L2METrel"    )
+                                                    ("ptl1"  , "lept1Pt"     )
+                                                    ("ptl2"  , "lept2Pt"     )
+                                                    ("met"   , "MET"         )
+                                                    ("ptll"  , "L2dileptonpt")
+                                                    ("mlj", "mlj"    )
+                                                    ("mljj"   , "mljj"       );
+
+#endif

@@ -1,0 +1,14 @@
+# vim: set noexpandtab:
+
+2013-07-09 Serhan Mete <amete@cern.ch>
+	* Now also works w/ slc6
+
+2013-05-22 Serhan Mete <amete@cern.ch>
+	* Root/PlotMaker.cxx: Only add data stat error on Data/SM ratio 
+	* TwoLeptonEWKPlotter/PlotMakerDefs.h: Implement all mT2 SR/CRs
+	* Root/PlotMaker.cxx: Implement Tree based systematics
+
+2013-05-21 Serhan Mete <amete@cern.ch>
+	* Initial Commit
+	* util/runPlotMaker.cxx: Added help function 
+	* Root/PlotMaker.cxx: Make labelling, and setting range of axis automatic
