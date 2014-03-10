@@ -209,18 +209,17 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   for(unsigned int i=0; i < m_systematicsList.size(); ++i) {
 
     // Retrieve the histograms
-
+    cout << "get histos for uncertainty " << m_systematicsList.at(i) << endl;
     getHistograms(m_inputROOTFile, observable, cut, sysHistograms, m_systematicsList.at(i), m_sampleList);
 
     // Loop over samples and add to total systematics histo
     for(unsigned int j=0; j < m_sampleList.size(); ++j) {
-      if(m_sampleList.at(j) != "Fakes" && (m_systematicsList.at(i).find("ELFR")==0 || m_systematicsList.at(i).find("ELRE")==0 || m_systematicsList.at(i).find("MUFR")==0 || m_systematicsList.at(i).find("MURE")==0)){
-// 	cout << m_sampleList.at(j) << " " << m_systematicsList.at(i) << " !Fakes but sys for fakes" << endl;
-	continue;
-      }
-//       if(m_systematicsList.at(i).find("wsys")==0) 
-      if(sysHistograms[j]!=NULL)
+      if(m_sampleList.at(j) != "Fakes" && (m_systematicsList.at(i).find("ELFR")==0 || m_systematicsList.at(i).find("ELRE")==0 || m_systematicsList.at(i).find("MUFR")==0 || m_systematicsList.at(i).find("MURE")==0)) continue;
+      
+      if(sysHistograms[j]!=NULL){
         totalSysHisto->Add(sysHistograms[j]);
+	cout << "sys Integral= " << sysHistograms[j]->Integral() << endl;
+      }
       else if ( m_sampleList.at(j) != "Data" && m_sampleList.at(j) != "Fakes" ) {
         cout << "PlotMaker::WARNING   Cannot find TTree for systematics " << 
                 m_systematicsList.at(i) << " for sample " << m_sampleList.at(j)  << endl;
@@ -363,24 +362,24 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   ratio         ->Draw("same && P");
   gPad          ->SetGridy(1);
 
-  TString plotName = channel + "_" + region + "_" + variable + ".pdf" ;
+  TString plotName = channel + "_" + region + "_" + variable + "_unblinded.pdf" ;
   //plotName = dirOut + "/" + plotName;
   canvas->SaveAs(plotName);
 
   // Delete unnecessary stuff to open up memory
   //delete[] histograms;
   //delete[] sysHistograms;
-//   delete Data;
-//   delete mcStack;
-//   delete nominalAsymErrors;
-//   delete nominalAsymErrorsNoError;
-//   delete ratioBand;
-//   delete ratio_original;
-//   delete ratio_raw;
-//   delete ratio;
-//   delete totalSysHisto;
-//   delete legend;
-//   delete canvas;
+  delete Data;
+  delete mcStack;
+  delete nominalAsymErrors;
+  delete nominalAsymErrorsNoError;
+  delete ratioBand;
+  delete ratio_original;
+  delete ratio_raw;
+  delete ratio;
+  delete totalSysHisto;
+  delete legend;
+  delete canvas;
 
   return;
 }
@@ -521,21 +520,17 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
       
       
       if(inputList.at(i) == "Data"){
-	cout << "cutToApply= " << cutToApply << endl;
-	cout << "cutToApply.Contains = " << cutToApply.Contains("L2nCentralLightJets==2") << endl;
 	if(cutToApply.Contains("L2nCentralLightJets==2")==1){
-	  cout << "Data, mljj>120000. cut in addition" << endl;
 	  if(m_converToGeV)
-	    tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply + "&& mljj>120000.");
+	    tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply/* + "&& mljj>120000."*/);
 	  else
-	    tree->Draw( varToPlot + ">>temp"       , weight + cutToApply + "&& mljj>120000.");
+	    tree->Draw( varToPlot + ">>temp"       , weight + cutToApply/* + "&& mljj>120000."*/);
 	}
 	else{
-	cout << "Data, mljj>120000. cut in addition" << endl;
 	if(m_converToGeV)
-	  tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply + "&& mlj>90000.");
+	  tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply/* + "&& mlj>90000."*/);
 	else
-	  tree->Draw( varToPlot + ">>temp"       , weight + cutToApply + "&& mlj>90000.");
+	  tree->Draw( varToPlot + ">>temp"       , weight + cutToApply/* + "&& mlj>90000."*/);
 	}
       }
       else{

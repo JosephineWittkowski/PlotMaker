@@ -15,14 +15,15 @@ int main(int argc, char** argv)
 {
   // Read user inputs
   string channels     = "none"                               ; vector<string> channelList   ;
-  string regions      = "SR_1jNOmlj,SR_23jNOmljj"; vector<string> regionList    ;
-  string variables    = "mlj,mljj"                              ; vector<string> variableList  ;
-  string samples      = "Fakes,Zjets,Top,ZV,WW,Higgs,Data"; vector<string> sampleList    ;
+  string regions      = "SR_1jNOmlj"; vector<string> regionList    ;
+  string variables    = "mlj"                              ; vector<string> variableList  ;
+  string samples      = "Higgs,Data"; vector<string> sampleList    ;
   string signal       = "130.0_0.0"			    ; vector<string> signalList;
-  string binValues    = "20,0,200"                         ; vector<string> binValueList  ;
-  string systematics  = "MUREUP"; 
+  string binValues    = "1,0,200"                         ; vector<string> binValueList  ;
+  string systematics  = "ESDOWN,JESUP,MSDOWN,MSUP"; 
   vector<string> systematicList;
-//   "MUREUP,EERDOWN,EERUP,EESLOWDOWN,EESLOWUP,EESMATDOWN,EESMATUP,EESPSDOWN,EESPSUP,EESZDOWN,EESZUP,IDDOWN,IDUP,JESDOWN,JESUP,MSDOWN,MSUP,RESOST,SCALESTDOWN,SCALESTUP,ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN"
+//   "EERDOWN,EERUP,EESLOWDOWN,EESLOWUP,EESMATDOWN,EESMATUP,EESPSDOWN,EESPSUP,EESZDOWN,EESZUP,IDDOWN,IDUP,JESDOWN,JESUP,MSDOWN,MSUP,RESOST,SCALESTDOWN,SCALESTUP,ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN,MUREUP"
+//   "Fakes,Zjets,Top,ZV,WW,Higgs,Data"
 //   "SR_EE_1j,SR_EE_23j,SR_MM_1j,SR_MM_23j,SR_EM_1j,SR_EM_23j"
   
 //   
