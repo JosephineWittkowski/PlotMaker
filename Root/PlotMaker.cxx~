@@ -121,16 +121,33 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     return;
   }
   int binWidth = ( atoi(m_binValuesList.at(2).c_str()) - atoi(m_binValuesList.at(1).c_str()) ) / atoi(m_binValuesList.at(0).c_str()); 
-
+  
+  // Build the legend
+  TLegend* legend        = new TLegend(0.7,0.6,0.9,0.9);
+  legend->SetBorderSize(0);
+  legend->SetFillColor(0);
+  ////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////
+  // Get signal histograms
+  TH1D    *histograms_signal[m_signalList.size()];
+  getHistograms(m_signalROOTFile, observable, cut, histograms_signal,"CENTRAL", m_signalList);
+  
+  //set style for signal sample(s)
+  for(unsigned int i=0; i<m_signalList.size(); ++i) {
+    histograms_signal[i]->SetLineWidth(2);
+    histograms_signal[i]->SetLineColor(kPink+7);
+    histograms_signal[i]->SetLineStyle(5);
+    legend->AddEntry(histograms_signal[i],SampleNames["signal1"],"l");
+//     cout << " content for " << m_signalList.at(i) << " = " << histograms_signal[i]->Integral() << endl;  
+  }
+  ////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////
+  
   // Get the central histograms 
-//   bool isSignalSample = false;
   TH1D    *histograms[m_sampleList.size()];
   getHistograms(m_inputROOTFile, observable, cut, histograms,"CENTRAL", m_sampleList);
   
-  // Get signal histograms
-//   isSignalSample = true;
-  TH1D    *histograms_signal[m_signalList.size()];
-  getHistograms(m_signalROOTFile, observable, cut, histograms_signal,"CENTRAL", m_signalList);
+  
 
   // Massage the Data and add MC to SM stack 
   TGraphAsymmErrors *Data = new TGraphAsymmErrors();
@@ -139,8 +156,10 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 
   for(unsigned int i=0; i<m_sampleList.size(); ++i) {
     // Add to stack if background
-    if(m_sampleList.at(i)!="Data")
+    if(m_sampleList.at(i)!="Data"){
       mcStack->Add(histograms[i]);
+//       cout << m_sampleList.at(i) << " NOMINAL= " << histograms[i]->Integral() << endl;
+    }
     else {
       dataIndex = i;
       histograms[i]->SetMarkerSize(0);
@@ -153,11 +172,9 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
       Data->SetLineWidth(2);
     }
   }
+//   cout << "MC stack content = " << ((TH1*)(mcStack->GetStack()->Last()))->Integral() << endl;
   
-    // Build the legend
-  TLegend* legend        = new TLegend(0.7,0.6,0.9,0.9);
-  legend->SetBorderSize(0);
-  legend->SetFillColor(0);
+
   
 
 
@@ -172,18 +189,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
       legend->AddEntry(histograms[i],SampleNames[m_sampleList.at(i)],"f");
   }
   
-  //set style for signal sample(s)
-    for(unsigned int i=0; i<m_signalList.size(); ++i) {
 
-//     histograms_signal[i]->SetMarkerSize(1);
-    histograms_signal[i]->SetLineWidth(2);
-//     histograms_signal[i]->SetLineColor(SampleColors[m_signalList.at(i)]);
-    histograms_signal[i]->SetLineColor(kPink+7);
-    histograms_signal[i]->SetLineStyle(5);
-    cout << " content for " << m_signalList.at(i) << " = " << histograms_signal[i]->Integral() << endl;
-    legend->AddEntry(histograms_signal[i],SampleNames["signal1"],"l");
-    
-  }
+  
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // HERE SHOULD COME THE SYSTEMATICS LOOP
@@ -205,23 +212,24 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   totalSysHisto->Reset();
   TGraphAsymmErrors* transient; 
   TH1D    *sysHistograms[m_sampleList.size()];
-//   isSignalSample = false;
   for(unsigned int i=0; i < m_systematicsList.size(); ++i) {
 
     // Retrieve the histograms
-
     getHistograms(m_inputROOTFile, observable, cut, sysHistograms, m_systematicsList.at(i), m_sampleList);
 
     // Loop over samples and add to total systematics histo
     for(unsigned int j=0; j < m_sampleList.size(); ++j) {
-      if(m_sampleList.at(j) != "Fakes" && (m_systematicsList.at(i).find("ELFR")==0 || m_systematicsList.at(i).find("ELRE")==0 || m_systematicsList.at(i).find("MUFR")==0 || m_systematicsList.at(i).find("MURE")==0)){
-// 	cout << m_sampleList.at(j) << " " << m_systematicsList.at(i) << " !Fakes but sys for fakes" << endl;
-	continue;
+
+      /*if(m_sampleList.at(j) != "Fakes" && (m_systematicsList.at(i).find("ELFR")==0 || m_systematicsList.at(i).find("ELRE")==0 || m_systematicsList.at(i).find("MUFR")==0 || m_systematicsList.at(i).find("MURE")==0)){
+// 	cout << m_sampleList.at(j) << " but " << m_systematicsList.at(i) << " -> continue! " << endl;
+	totalSysHisto->Add(histograms[j]);
       }
-//       if(m_systematicsList.at(i).find("wsys")==0) 
-      if(sysHistograms[j]!=NULL)
+      else */if(sysHistograms[j]!=NULL){
+// 	cout << m_sampleList.at(j) << " " << m_systematicsList.at(i) << " added" << endl;
         totalSysHisto->Add(sysHistograms[j]);
-      else if ( m_sampleList.at(j) != "Data" && m_sampleList.at(j) != "Fakes" ) {
+// 	cout << m_sampleList.at(j) << " " << m_systematicsList.at(i) << "integral: " << sysHistograms[j]->Integral() << endl;
+      }
+      else if ( m_sampleList.at(j) != "Data"/* && m_sampleList.at(j) != "Fakes" */) {
         cout << "PlotMaker::WARNING   Cannot find TTree for systematics " << 
                 m_systematicsList.at(i) << " for sample " << m_sampleList.at(j)  << endl;
       }
@@ -229,7 +237,9 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 
     // Add to the band
     transient = TH1TOTGraph(totalSysHisto);
+    cout << m_systematicsList.at(i) << endl;
     myAddtoBand(transient,nominalAsymErrors);
+    cout << m_systematicsList.at(i) << " Integral= "  << totalSysHisto->Integral() << endl;
     totalSysHisto->Reset();
   }
 
@@ -245,7 +255,9 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   topPad               ->cd();
   topPad               ->SetBottomMargin(0.15);
   histograms[dataIndex]->Draw("p");
+  cout << "data content= " << histograms[dataIndex]->Integral() << endl;
   mcStack              ->Draw("hists same");
+//   nominalAsymErrors->GetErrorYhigh()
   nominalAsymErrors    ->Draw("same && E2");
   Data                 ->Draw("same && p");
   histograms_signal[0]->Draw("hists same");
@@ -270,14 +282,14 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   else if( variable.EqualTo("metRel") ) {
     xlabel = "E_{T}^{miss,rel} [GeV]";
   }
-  else if( variable.EqualTo("met") ) {
-    xlabel = "E_{T}^{miss} [GeV]";
+  else if( variable.EqualTo("mtmax") ) {
+    xlabel = "max(m_{T}(l0), m_{T}(l1)) [GeV]";
   }
   else if( variable.EqualTo("ptl1") ) {
     xlabel = "p_{T,l1} [GeV]";
   }
-  else if( variable.EqualTo("ptl2") ) {
-    xlabel = "p_{T,l2} [GeV]";
+  else if( variable.EqualTo("mWWT") ) {
+    xlabel = "m_{T}(WW) [GeV]";
   }
   else if( variable.EqualTo("ptll") ) {
     xlabel = "p_{T,ll} [GeV]";
@@ -365,8 +377,10 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   gPad          ->SetGridy(1);
 
   TString plotName = channel + "_" + region + "_" + variable + ".pdf" ;
+  TString plotNameeps = channel + "_" + region + "_" + variable + ".eps" ;
   //plotName = dirOut + "/" + plotName;
   canvas->SaveAs(plotName);
+  canvas->SaveAs(plotNameeps);
 
   // Delete unnecessary stuff to open up memory
   //delete[] histograms;
@@ -439,49 +453,79 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
                                       atof(m_binValuesList.at(1).c_str()),
                                       atof(m_binValuesList.at(2).c_str())); 
   temp->Sumw2();
+  
   // Here is the loop over samples
   for(unsigned int i=0; i<inputList.size(); ++i) {
 
-    // Return NULL if systematics and Data or Fakes
-    if( (inputList.at(i) == "Data" || inputList.at(i) == "Fakes") && !variation.EqualTo("CENTRAL") ) {
+    // Return NULL if systematics and Data
+    if( (inputList.at(i) == "Data") && !variation.EqualTo("CENTRAL") ) {
       histos[i] = NULL;
       continue;
     }
-    if(inputList.at(i) != "Fakes" && (variation.Contains("ELFR")==1 || variation.Contains("ELRE")==1 || variation.Contains("MUFR")==1 || variation.Contains("MURE")==1)){
-      continue;
-    }
-    
-    //use eventweight for nominal (CENTRAL) and most sytematic variations.
-    TString weight = "eventweight";
-    //use other weight for systematic variations where event weight was changed.
-//     if(variation == "wsysEFSUP") weight = "syst_EFSUP";
-//     cout << variation << " weight= " << weight << endl;
-    
+
     
     // Define variables internal to the loop
     TString treeName = "";
-    if(inputList == m_sampleList){
-      if(variation.Contains("wsys")==0) treeName.Form("%s_",inputList.at(i).c_str()); treeName += variation;
-      //if variation contains wsys, use CENTRAL tree
-      if(variation.Contains("wsys")==1){
-	treeName = ""; treeName.Form("%s_",inputList.at(i).c_str()); treeName += "CENTRAL";
-      }
+    //DATA
+    if(inputList.at(i) == "Data"){
+      treeName.Form("%s_",inputList.at(i).c_str()); 
+      treeName += "CENTRAL";
+      cout << "Data " << inputList.at(i) << " treeName= " << treeName << endl;
     }
     else{
-      if(variation.Contains("wsys")==0)  treeName = ""; treeName.Form("SSWH8TeV_%s_",m_signalList.at(i).c_str()); treeName += variation;
+      //BACKGROUND
+      if(inputList == m_sampleList){      
+	//MC BACKGROUND
+	if(inputList.at(i) != "Fakes" ){
+	  if(variation.EqualTo("CENTRAL")){
+	    treeName.Form("%s_",inputList.at(i).c_str()); 
+	    treeName += "CENTRAL";
+	  }
+	  if(variation.Contains("ELFR") || variation.Contains("ELRE") || variation.Contains("MUFR") || variation.Contains("MURE")){
+	    treeName.Form("%s_",inputList.at(i).c_str()); 
+	    treeName += "CENTRAL";
+	  }
+	  else{
+	    treeName.Form("%s_",inputList.at(i).c_str()); 
+	    treeName += variation;
+	  }
+	  cout << "MC background " << inputList.at(i) << " treeName= " << treeName << endl;
+	}
+	//FAKE BACKGROUND
+	if(inputList.at(i) == "Fakes"){
+	  if(variation.EqualTo("CENTRAL")){
+	    treeName.Form("%s_",inputList.at(i).c_str()); 
+	    treeName += "CENTRAL";
+	  }
+	  if(variation.Contains("ELFR") || variation.Contains("ELRE") || variation.Contains("MUFR") || variation.Contains("MURE")){
+	    treeName.Form("%s_",inputList.at(i).c_str()); 
+	    treeName += variation;
+	  }
+	  else{
+	    treeName.Form("%s_",inputList.at(i).c_str()); 
+	    treeName += "CENTRAL";
+	  }
+	  cout << "Fake background " << inputList.at(i) << " treeName= " << treeName << endl;
+	}
+      }
+      //SIGNAL
+      else{
+	treeName = ""; treeName.Form("SSWH8TeV_%s_",m_signalList.at(i).c_str()); treeName += variation;
+	cout << "signal " << inputList.at(i) << " treeName= " << treeName << endl;
+      }
     }
-//     cout << "treeName= " << treeName << endl;
+//       cout << inputList.at(i) << " " << variation << " treeName= " << treeName << endl;    
     TString histoName = ""; histoName.Form("histo_%s",inputList.at(i).c_str());
 
     // Get the TTree - continue the loop if not found 
     TTree* tree = (TTree*) input->Get(treeName);
     if(tree == NULL) {
-      cout << "PlotMaker::WARNING   Cannot find TTree w/ name " << treeName << endl;
+      cout << "PlotMaker::WARNING   Cannot find TTree w/ name " << treeName << " " << inputList.at(i) << " " << variation << endl;
       histos[i] = NULL;
       continue;
     }
      
-//       weights:
+//       sys weights:
 //       
 //       ESFUP
 //       ESFDOWN
@@ -519,28 +563,29 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
 //       TFAKESFDOWN
 //       LUMI
       
-      
-      
-      if(inputList.at(i) == "Data"){
-	if(cutToApply.Contains("L2nCentralLightJets==2")==1){
-	  if(m_converToGeV)
-	    tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply + "&& mljj>120000.");
-	  else
-	    tree->Draw( varToPlot + ">>temp"       , weight + cutToApply + "&& mljj>120000.");
-	}
-	else{
+    //use eventweight for nominal (CENTRAL) and most sytematic variations.
+    TString weight = "eventweight";
+    
+    if(inputList.at(i) == "Data"){
+      if(cutToApply.Contains("L2nCentralLightJets==2")==1){
 	if(m_converToGeV)
-	  tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply + "&& mlj>90000.");
+	  tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply + "&& Ht<220000.");
 	else
-	  tree->Draw( varToPlot + ">>temp"       , weight + cutToApply + "&& mlj>90000.");
-	}
+	  tree->Draw( varToPlot + ">>temp"       , weight + cutToApply + "&& mljj>120000.");
       }
       else{
-	if(m_converToGeV)
-	  tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply );
-	else
-	  tree->Draw( varToPlot + ">>temp"       , weight + cutToApply);
+      if(m_converToGeV)
+	tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply + "&& mlj>90000.");
+      else
+	tree->Draw( varToPlot + ">>temp"       , weight + cutToApply + "&& Ht<200000.");
       }
+    }
+    else{
+      if(m_converToGeV)
+	tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply );
+      else
+	tree->Draw( varToPlot + ">>temp"       , weight + cutToApply);
+    }
 
     // Clone and beautify
     histos[i] = (TH1D*) temp->Clone();

@@ -65,7 +65,7 @@ TS2TSMap RegionCuts = boost::assign::map_list_of
 
 /// \brief Sample Colors
 ColorMap SampleColors = boost::assign::map_list_of ("Data"  , (int)kBlack    )
-                                                   ("ttst"  , (int)kRed+1    )
+                                                   ("Top"  , (int)kRed+1    )
                                                    ("WW"    , (int)kAzure+4  )
                                                    ("Zjets" , (int)kOrange-2 )
                                                    ("ZV"    , (int)kSpring+1 )
@@ -75,7 +75,7 @@ ColorMap SampleColors = boost::assign::map_list_of ("Data"  , (int)kBlack    )
 
 /// \brief Sample Names
 TS2TSMap SampleNames = boost::assign::map_list_of ("Data"  , "Data 2012"    )
-                                                  ("ttst"  , "t#bar{t} + Wt")
+                                                  ("Top"  , "t#bar{t} + Wt")
                                                   ("WW"    , "WW"           )
                                                   ("Zjets" , "Z+jets"       )
                                                   ("ZV"    , "ZV"           )
@@ -86,9 +86,9 @@ TS2TSMap SampleNames = boost::assign::map_list_of ("Data"  , "Data 2012"    )
 
 /// \brief Define the variables
 TS2TSMap VariableNames = boost::assign::map_list_of ("Ht"   , "Ht"         )
-                                                    ("mll"   , "L2Mll"       )
+                                                    ("mtmax"   , "mtmax"       )
                                                     ("metRel", "L2METrel"    )
-                                                    ("ptl1"  , "lept1Pt"     )
+                                                    ("mWWT"  , "mtllmet"     )
                                                     ("ptl2"  , "lept2Pt"     )
                                                     ("met"   , "MET"         )
                                                     ("ptll"  , "L2dileptonpt")

@@ -251,6 +251,7 @@ void myAddtoBand(TGraphAsymmErrors* g1, TGraphAsymmErrors* g2) {
     //printf("%d: y1=%f y2=%f Eyhigh= %f Eylow= %f \n",i,y1,y2,EYhigh[i],EYlow[i]);
 
     y0=y1-y2;
+//     cout << "y0= " << y0 << endl;
     if (y0!=0) {
      if (y0>0){
       eyh=EYhigh[i];
