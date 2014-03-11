@@ -15,11 +15,11 @@ int main(int argc, char** argv)
 {
   // Read user inputs
   string channels     = "none"                               ; vector<string> channelList   ;
-  string regions      = "SR_23jNOmljj"; vector<string> regionList    ;
+  string regions      = "SR_MM_23jNOmljj"; vector<string> regionList    ;
   string variables    = "mljj"                              ; vector<string> variableList  ;
-  string samples      = "Fakes,Zjets,Top,ZV,WW,Higgs,Data"; vector<string> sampleList    ;
+  string samples      = "Higgs,Top,WW,Fakes,ZV,Zjets,Data"; vector<string> sampleList    ;
   string signal       = "130.0_0.0"			    ; vector<string> signalList;
-  string binValues    = "40,0,400"                         ; vector<string> binValueList  ;
+  string binValues    = "25,0,500"                         ; vector<string> binValueList  ;
   string systematics  = "EERDOWN,EERUP,EESLOWDOWN,EESLOWUP,EESMATDOWN,EESMATUP,EESPSDOWN,EESPSUP,EESZDOWN,EESZUP,IDDOWN,IDUP,JESDOWN,JESUP,MSDOWN,MSUP,RESOST,SCALESTDOWN,SCALESTUP,ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN,MUREUP"; 
   vector<string> systematicList;
 //   "EERDOWN,EERUP,EESLOWDOWN,EESLOWUP,EESMATDOWN,EESMATUP,EESPSDOWN,EESPSUP,EESZDOWN,EESZUP,IDDOWN,IDUP,JESDOWN,JESUP,MSDOWN,MSUP,RESOST,SCALESTDOWN,SCALESTUP,ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN,MUREUP"

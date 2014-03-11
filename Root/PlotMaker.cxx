@@ -158,7 +158,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     // Add to stack if background
     if(m_sampleList.at(i)!="Data"){
       mcStack->Add(histograms[i]);
-//       cout << m_sampleList.at(i) << " NOMINAL= " << histograms[i]->Integral() << endl;
+      cout << m_sampleList.at(i) << " NOMINAL= " << histograms[i]->Integral(0, -1) << endl;
     }
     else {
       dataIndex = i;
@@ -220,16 +220,10 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     // Loop over samples and add to total systematics histo
     for(unsigned int j=0; j < m_sampleList.size(); ++j) {
 
-      /*if(m_sampleList.at(j) != "Fakes" && (m_systematicsList.at(i).find("ELFR")==0 || m_systematicsList.at(i).find("ELRE")==0 || m_systematicsList.at(i).find("MUFR")==0 || m_systematicsList.at(i).find("MURE")==0)){
-// 	cout << m_sampleList.at(j) << " but " << m_systematicsList.at(i) << " -> continue! " << endl;
-	totalSysHisto->Add(histograms[j]);
-      }
-      else */if(sysHistograms[j]!=NULL){
-// 	cout << m_sampleList.at(j) << " " << m_systematicsList.at(i) << " added" << endl;
+      if(sysHistograms[j]!=NULL){
         totalSysHisto->Add(sysHistograms[j]);
-// 	cout << m_sampleList.at(j) << " " << m_systematicsList.at(i) << "integral: " << sysHistograms[j]->Integral() << endl;
       }
-      else if ( m_sampleList.at(j) != "Data"/* && m_sampleList.at(j) != "Fakes" */) {
+      else if ( m_sampleList.at(j) != "Data") {
         cout << "PlotMaker::WARNING   Cannot find TTree for systematics " << 
                 m_systematicsList.at(i) << " for sample " << m_sampleList.at(j)  << endl;
       }
@@ -237,9 +231,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 
     // Add to the band
     transient = TH1TOTGraph(totalSysHisto);
-    cout << m_systematicsList.at(i) << endl;
     myAddtoBand(transient,nominalAsymErrors);
-    cout << m_systematicsList.at(i) << " Integral= "  << totalSysHisto->Integral() << endl;
+//     cout << m_systematicsList.at(i) << " Integral= "  << totalSysHisto->Integral() << endl;
     totalSysHisto->Reset();
   }
 
@@ -255,9 +248,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   topPad               ->cd();
   topPad               ->SetBottomMargin(0.15);
   histograms[dataIndex]->Draw("p");
-  cout << "data content= " << histograms[dataIndex]->Integral() << endl;
+//   cout << "data content= " << histograms[dataIndex]->Integral() << endl;
   mcStack              ->Draw("hists same");
-//   nominalAsymErrors->GetErrorYhigh()
   nominalAsymErrors    ->Draw("same && E2");
   Data                 ->Draw("same && p");
   histograms_signal[0]->Draw("hists same");
@@ -356,6 +348,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     if(x1 > 0. && y1 > 0.) {
       ratio->SetPoint(newIndex, x1, y1);
       ratio->SetPointError(newIndex, ratio_raw->GetErrorXlow(kk), ratio_raw->GetErrorXhigh(kk), ratio_raw->GetErrorYlow(kk), ratio_raw->GetErrorYhigh(kk));
+//       cout << "xlow " << ratio_raw->GetErrorXlow(kk) << " xhigh " <<  ratio_raw->GetErrorXhigh(kk) << " ylow " << ratio_raw->GetErrorYlow(kk) << " yhigh " <<  ratio_raw->GetErrorYhigh(kk) << endl;
       newIndex++;
     }
   }
@@ -470,7 +463,7 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
     if(inputList.at(i) == "Data"){
       treeName.Form("%s_",inputList.at(i).c_str()); 
       treeName += "CENTRAL";
-      cout << "Data " << inputList.at(i) << " treeName= " << treeName << endl;
+//       cout << "Data " << inputList.at(i) << " treeName= " << treeName << endl;
     }
     else{
       //BACKGROUND
@@ -489,7 +482,7 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
 	    treeName.Form("%s_",inputList.at(i).c_str()); 
 	    treeName += variation;
 	  }
-	  cout << "MC background " << inputList.at(i) << " treeName= " << treeName << endl;
+// 	  cout << "MC background " << inputList.at(i) << " treeName= " << treeName << endl;
 	}
 	//FAKE BACKGROUND
 	if(inputList.at(i) == "Fakes"){
@@ -505,13 +498,13 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
 	    treeName.Form("%s_",inputList.at(i).c_str()); 
 	    treeName += "CENTRAL";
 	  }
-	  cout << "Fake background " << inputList.at(i) << " treeName= " << treeName << endl;
+// 	  cout << "Fake background " << inputList.at(i) << " treeName= " << treeName << endl;
 	}
       }
       //SIGNAL
       else{
 	treeName = ""; treeName.Form("SSWH8TeV_%s_",m_signalList.at(i).c_str()); treeName += variation;
-	cout << "signal " << inputList.at(i) << " treeName= " << treeName << endl;
+// 	cout << "signal " << inputList.at(i) << " treeName= " << treeName << endl;
       }
     }
 //       cout << inputList.at(i) << " " << variation << " treeName= " << treeName << endl;    
@@ -569,13 +562,13 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
     if(inputList.at(i) == "Data"){
       if(cutToApply.Contains("L2nCentralLightJets==2")==1){
 	if(m_converToGeV)
-	  tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply + "&& mljj>120000.");
+	  tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply + "&&  mljj>120000.");
 	else
 	  tree->Draw( varToPlot + ">>temp"       , weight + cutToApply + "&& mljj>120000.");
       }
       else{
       if(m_converToGeV)
-	tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply + "&& mlj>90000.");
+	tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply + "&& Ht<200000.");
       else
 	tree->Draw( varToPlot + ">>temp"       , weight + cutToApply + "&& Ht<200000.");
       }
@@ -611,12 +604,18 @@ void PlotMaker::buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors*
   output->SetMarkerSize(0);
   for(int bin=0; bin < output->GetN(); bin++){ 
     output->GetY()[bin] = 1.; 
-    if( input->GetY()[bin] > 0.0001 ) 
+//     cout << "EYhigh= " << input->GetEYhigh()[bin] << " / " << input->GetY()[bin] << endl; 
+    if( input->GetY()[bin] > 0.0001 ) {
+      
       output->GetEYhigh()[bin]=input->GetEYhigh()[bin]/input->GetY()[bin]; 
+    }
    else 
       output->GetEYhigh()[bin]= 0.; 
-   if( input->GetY()[bin] > 0.0001 ) 
+//    cout << "EYlow= " << input->GetEYlow()[bin] << " / " << input->GetY()[bin] << endl;
+   if( input->GetY()[bin] > 0.0001 ){ 
+     
       output->GetEYlow()[bin]=input->GetEYlow()[bin]/input->GetY()[bin]; 
+   }
    else 
       output->GetEYlow()[bin]= 0.; 
    if( output->GetEYlow()[bin] > 1. ) 
