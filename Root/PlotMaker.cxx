@@ -151,13 +151,18 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 
   // Massage the Data and add MC to SM stack 
   TGraphAsymmErrors *Data = new TGraphAsymmErrors();
-  THStack *mcStack        = new THStack("mcStack","Standard Model");
+  THStack *stackBg        = new THStack("stackBg","Standard Model");
+  THStack *stackMCBg        = new THStack("stackMCBg","MC Standard Model");
   int      dataIndex      = -1; 
+  int 	   FakesIndex     = -1;
 
   for(unsigned int i=0; i<m_sampleList.size(); ++i) {
     // Add to stack if background
+    if(m_sampleList.at(i) == "Fakes") FakesIndex = i;
+    
     if(m_sampleList.at(i)!="Data"){
-      mcStack->Add(histograms[i]);
+      stackBg->Add(histograms[i]);
+      if(m_sampleList.at(i)!="Fakes") stackMCBg->Add(histograms[i]);
       cout << m_sampleList.at(i) << " NOMINAL= " << histograms[i]->Integral(0, -1) << endl;
     }
     else {
@@ -172,7 +177,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
       Data->SetLineWidth(2);
     }
   }
-//   cout << "MC stack content = " << ((TH1*)(mcStack->GetStack()->Last()))->Integral() << endl;
+//   cout << "MC stack content = " << ((TH1*)(stackBg->GetStack()->Last()))->Integral() << endl;
   
 
   
@@ -196,45 +201,107 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   // HERE SHOULD COME THE SYSTEMATICS LOOP
 
   // Get Total MC Histo
-  TH1D* stackHisto = (TH1D*) mcStack->GetStack()->Last();
+  TH1D* stackHistoMCBg = (TH1D*) stackMCBg->GetStack()->Last();
 
-  TGraphAsymmErrors* nominalAsymErrors = TH1TOTGraph(stackHisto);
+  TGraphAsymmErrors* nominalAsymErrors = TH1TOTGraph(stackHistoMCBg);
   nominalAsymErrors->SetMarkerSize(0);
   nominalAsymErrors->SetLineWidth(2);
   nominalAsymErrors->SetFillStyle(3004);
   nominalAsymErrors->SetFillColor(kBlack);
+  cout << "only statistical error on MC stackHistoMCBg (excl Fakes):" << endl;
+  for(int bin=0; bin < nominalAsymErrors->GetN(); bin++){ 
+    cout << "bin " << bin <<  " EYhigh()= " << nominalAsymErrors->GetEYhigh()[bin] << endl;
+    cout << "bin " << bin <<  " EYlow()=  " << nominalAsymErrors->GetEYlow()[bin] << endl;
+  }
+
 
   // Add SM Bkg. to the legend
   legend->AddEntry(nominalAsymErrors,"Bkg. Uncert.","f"); 
 
   // Loop over and add the Tree based systematics
-  TH1D* totalSysHisto = (TH1D*) stackHisto->Clone();
-  totalSysHisto->Reset();
-  TGraphAsymmErrors* transient; 
+  TH1D* totalSysHistoMcBg = (TH1D*) stackHistoMCBg->Clone();
+  totalSysHistoMcBg->Reset();
+  TH1D* totalSysHistoFakes = (TH1D*) stackHistoMCBg->Clone();
+  totalSysHistoFakes->Reset();
+//   totalSysHistoMcBg == NULL;
+//   if(totalSysHistoMcBg==NULL) cout << "totalSysHistoMcBg==NULL" << endl;
+  TGraphAsymmErrors* transientMcBg; 
+  TGraphAsymmErrors* transientFakes; 
+
+  cout << "histograms[FakesIndex]->Integral()= " << histograms[FakesIndex]->Integral() << endl;
+  TGraphAsymmErrors*  AsymmErrorsFake = TH1TOTGraph(histograms[FakesIndex]);
+  cout << "only statistical error on Fakes:" << endl;
+    for(int bin=0; bin < AsymmErrorsFake->GetN(); bin++){ 
+    cout << "bin " << bin <<  " EYhigh()= " << AsymmErrorsFake->GetEYhigh()[bin] << endl;
+    cout << "bin " << bin <<  " EYlow()=  " << AsymmErrorsFake->GetEYlow()[bin] << endl;
+  }
+  cout << endl;
+  cout << endl;
+  cout << endl;
+  cout << endl;
+
   TH1D    *sysHistograms[m_sampleList.size()];
+  int McBgIndex = -1;
   for(unsigned int i=0; i < m_systematicsList.size(); ++i) {
+    cout << m_systematicsList.at(i) << endl;
 
     // Retrieve the histograms
     getHistograms(m_inputROOTFile, observable, cut, sysHistograms, m_systematicsList.at(i), m_sampleList);
 
     // Loop over samples and add to total systematics histo
     for(unsigned int j=0; j < m_sampleList.size(); ++j) {
+      
 
-      if(sysHistograms[j]!=NULL){
-        totalSysHisto->Add(sysHistograms[j]);
-      }
-      else if ( m_sampleList.at(j) != "Data") {
-        cout << "PlotMaker::WARNING   Cannot find TTree for systematics " << 
-                m_systematicsList.at(i) << " for sample " << m_sampleList.at(j)  << endl;
+      if(m_sampleList.at(j) != "Fakes"){
+// 	cout << "! Fakes" << endl;
+	if(sysHistograms[j]!=NULL){
+	  cout << m_sampleList.at(j) << " sys Integral " << sysHistograms[j]->Integral(0,-1) << endl;
+	  totalSysHistoMcBg->Add(sysHistograms[j]);
+	  McBgIndex = j;
+// 	  cout << "added to totalSysHistoMcBg" << endl;	  
+	}
+	else if ( m_sampleList.at(j) != "Data") {
+	  cout << "PlotMaker::WARNING   Cannot find TTree for systematics " << 
+		  m_systematicsList.at(i) << " for sample " << m_sampleList.at(j)  << endl;
+	}
       }
     }
 
-    // Add to the band
-    transient = TH1TOTGraph(totalSysHisto);
-    myAddtoBand(transient,nominalAsymErrors);
-//     cout << m_systematicsList.at(i) << " Integral= "  << totalSysHisto->Integral() << endl;
-    totalSysHisto->Reset();
+
+    // Add to the band:
+    
+    //All MC BG (correlated-> use TH1D, linear) SYS (uncorrelated -> use myAddtoBand(), squared)
+    if(McBgIndex>=0){
+      transientMcBg = TH1TOTGraph(totalSysHistoMcBg);
+      cout << "myAddtoBand for McBg:" << endl;
+      myAddtoBand(transientMcBg,nominalAsymErrors);
+      totalSysHistoMcBg->Reset();
+      McBgIndex = -1;
+    }
+
+    //All Fake SYS (uncorrelated -> use myAddtoBand(), squared)
+    if(FakesIndex>=0 && sysHistograms[FakesIndex]!=NULL){
+
+      totalSysHistoFakes = sysHistograms[FakesIndex];
+//       cout << "Fakes sys Integral " << sysHistograms[FakesIndex]->Integral(0,-1) << endl;
+//       cout << "AsymmErrorsFake->Integral()= " << AsymmErrorsFake->Integral() << endl;
+      transientFakes = TH1TOTGraph(totalSysHistoFakes);
+      cout << "myAddtoBand for Fakes:" << endl;
+      myAddtoBand(transientFakes,AsymmErrorsFake);     
+//       FakesIndex = -1;
+      totalSysHistoFakes->Reset();
+    }
+//     cout << m_systematicsList.at(i) << " Integral= "  << totalSysHistoMcBg->Integral() << endl;
+
   }
+  cout << endl;
+  cout << endl;
+  cout << endl;
+  cout << endl;
+  cout << "add MCbg and fakes errors:" << endl;
+  myTGraphErrorsAdd(nominalAsymErrors,AsymmErrorsFake);
+
+
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // Draw the canvas
@@ -249,7 +316,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   topPad               ->SetBottomMargin(0.15);
   histograms[dataIndex]->Draw("p");
 //   cout << "data content= " << histograms[dataIndex]->Integral() << endl;
-  mcStack              ->Draw("hists same");
+  stackBg              ->Draw("hists same");
   nominalAsymErrors    ->Draw("same && E2");
   Data                 ->Draw("same && p");
   histograms_signal[0]->Draw("hists same");
@@ -294,7 +361,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   histograms[dataIndex]->GetXaxis()->SetLabelSize(0.03);
   histograms[dataIndex]->GetYaxis()->SetTitle(ylabel); 
 //   histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,1000*pow(10,ceil(log(histograms[dataIndex]->GetMaximum())/log(10))));
-    histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,histograms[dataIndex]->GetMaximum()*2);
+    histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,histograms[dataIndex]->GetMaximum()*10);
 
   gPad->RedrawAxis();
 //   gPad->SetLogy(1);
@@ -369,8 +436,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   ratio         ->Draw("same && P");
   gPad          ->SetGridy(1);
 
-  TString plotName = channel + "_" + region + "_" + variable + ".pdf" ;
-  TString plotNameeps = channel + "_" + region + "_" + variable + ".eps" ;
+  TString plotName = channel + "_" + region + "_" + variable + "_test.pdf" ;
+  TString plotNameeps = channel + "_" + region + "_" + variable + "_test.eps" ;
   //plotName = dirOut + "/" + plotName;
   canvas->SaveAs(plotName);
   canvas->SaveAs(plotNameeps);
@@ -379,14 +446,14 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   //delete[] histograms;
   //delete[] sysHistograms;
   delete Data;
-  delete mcStack;
+  delete stackBg;
   delete nominalAsymErrors;
   delete nominalAsymErrorsNoError;
   delete ratioBand;
   delete ratio_original;
   delete ratio_raw;
   delete ratio;
-  delete totalSysHisto;
+  delete totalSysHistoMcBg;
   delete legend;
   delete canvas;
 
@@ -452,6 +519,7 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
 
     // Return NULL if systematics and Data
     if( (inputList.at(i) == "Data") && !variation.EqualTo("CENTRAL") ) {
+//       cout << "Data, histos[i] set to NULL" << endl;
       histos[i] = NULL;
       continue;
     }
@@ -498,7 +566,7 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
 	    treeName.Form("%s_",inputList.at(i).c_str()); 
 	    treeName += "CENTRAL";
 	  }
-// 	  cout << "Fake background " << inputList.at(i) << " treeName= " << treeName << endl;
+	  cout << "Fake background " << inputList.at(i) << " treeName= " << treeName << endl;
 	}
       }
       //SIGNAL
@@ -519,42 +587,17 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
     }
      
 //       sys weights:
-//       
-//       ESFUP
-//       ESFDOWN
-//       MEFFUP
-//       MEFFDOWN
-//       ETRIGREWUP
-//       ETRIGREWDOWN
-//       MTRIGREWUP
-//       MTRIGREWDOWN
-//       BJETUP
-//       BJETDOWN
-//       CJETUP
-//       CJETDOWN
-//       BMISTAGUP
-//       BMISTAGDOWN
-//       GEN
-//       PS
-//       IFSF
-//       SCLAE
-//       PDFERRUP
-//       PDFERRDOWN
-//       PIOELUPUP
-//       PILEUPDOWN
-//       TIDSFUP
-//       TIDSFDOWN
-//       XSUP
-//       XSDOWN
-//       TESUP
-//       TESDOWN
-//       TEVSFUP
-//       TEVSFDOWN
-//       TRIGSFUP
-//       TRISFDOWN
-//       TFAKESFUP
-//       TFAKESFDOWN
-//       LUMI
+
+// syst_BKGMETHODUP
+// syst_BKGMETHODDOWN
+// syst_ETRIGREWUP
+// syst_ETRIGREWDOWN 
+// syst_MTRIGREWUP
+// syst_MTRIGREWDOWN 
+// syst_BJETUP
+// syst_BJETDOWN 
+// syst_XSUP
+// syst_XSDOWN
       
     //use eventweight for nominal (CENTRAL) and most sytematic variations.
     TString weight = "eventweight";
@@ -568,7 +611,7 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
       }
       else{
       if(m_converToGeV)
-	tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply + "&& Ht<200000.");
+	tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply );
       else
 	tree->Draw( varToPlot + ">>temp"       , weight + cutToApply + "&& Ht<200000.");
       }
@@ -604,23 +647,23 @@ void PlotMaker::buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors*
   output->SetMarkerSize(0);
   for(int bin=0; bin < output->GetN(); bin++){ 
     output->GetY()[bin] = 1.; 
-//     cout << "EYhigh= " << input->GetEYhigh()[bin] << " / " << input->GetY()[bin] << endl; 
+    cout << "EYhigh= " << input->GetEYhigh()[bin] << " / " << input->GetY()[bin] << endl; 
     if( input->GetY()[bin] > 0.0001 ) {
       
       output->GetEYhigh()[bin]=input->GetEYhigh()[bin]/input->GetY()[bin]; 
     }
    else 
       output->GetEYhigh()[bin]= 0.; 
-//    cout << "EYlow= " << input->GetEYlow()[bin] << " / " << input->GetY()[bin] << endl;
+   cout << "EYlow=  " << input->GetEYlow()[bin] << " / " << input->GetY()[bin] << endl;
    if( input->GetY()[bin] > 0.0001 ){ 
      
       output->GetEYlow()[bin]=input->GetEYlow()[bin]/input->GetY()[bin]; 
    }
    else 
       output->GetEYlow()[bin]= 0.; 
-   if( output->GetEYlow()[bin] > 1. ) 
-     output->GetEYlow()[bin] = 1.; 
-   if( output->GetEYhigh()[bin] > 1. ) 
-     output->GetEYhigh()[bin] = 1.; 
+//    if( output->GetEYlow()[bin] > 1. ) 
+//      output->GetEYlow()[bin] = 1.; 
+//    if( output->GetEYhigh()[bin] > 1. ) 
+//      output->GetEYhigh()[bin] = 1.; 
   }
 }
