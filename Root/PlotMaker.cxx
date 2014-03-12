@@ -600,7 +600,10 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
 // syst_XSDOWN
       
     //use eventweight for nominal (CENTRAL) and most sytematic variations.
-    TString weight = "eventweight";
+    TString weight;
+    if(!variation.Contains("syst"))weight= "eventweight";
+    else weight = variation;
+    cout << "weight = " << weight << endl;
     
     if(inputList.at(i) == "Data"){
       if(cutToApply.Contains("L2nCentralLightJets==2")==1){

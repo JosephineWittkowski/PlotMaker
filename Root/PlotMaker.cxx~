@@ -588,19 +588,21 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
      
 //       sys weights:
 
-syst_BKGMETHODUP
-syst_BKGMETHODDOWN
-syst_ETRIGREWUP
-syst_ETRIGREWDOWN 
-syst_MTRIGREWUP
-syst_MTRIGREWDOWN 
-syst_BJETUP
-syst_BJETDOWN 
-syst_XSUP
-syst_XSDOWN
+// syst_BKGMETHODUP
+// syst_BKGMETHODDOWN
+// syst_ETRIGREWUP
+// syst_ETRIGREWDOWN 
+// syst_MTRIGREWUP
+// syst_MTRIGREWDOWN 
+// syst_BJETUP
+// syst_BJETDOWN 
+// syst_XSUP
+// syst_XSDOWN
       
     //use eventweight for nominal (CENTRAL) and most sytematic variations.
-    TString weight = "eventweight";
+    TString weight;
+    if(!variation.Contains("syst"))weight= "eventweight";
+    else weight = variation;
     
     if(inputList.at(i) == "Data"){
       if(cutToApply.Contains("L2nCentralLightJets==2")==1){
