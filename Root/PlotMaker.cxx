@@ -378,17 +378,17 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   // Delete unnecessary stuff to open up memory
   //delete[] histograms;
   //delete[] sysHistograms;
-//   delete Data;
-//   delete mcStack;
-//   delete nominalAsymErrors;
-//   delete nominalAsymErrorsNoError;
-//   delete ratioBand;
-//   delete ratio_original;
-//   delete ratio_raw;
-//   delete ratio;
-//   delete totalSysHisto;
-//   delete legend;
-//   delete canvas;
+  delete Data;
+  delete mcStack;
+  delete nominalAsymErrors;
+  delete nominalAsymErrorsNoError;
+  delete ratioBand;
+  delete ratio_original;
+  delete ratio_raw;
+  delete ratio;
+  delete totalSysHisto;
+  delete legend;
+  delete canvas;
 
   return;
 }

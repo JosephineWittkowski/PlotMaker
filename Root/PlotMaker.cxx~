@@ -562,7 +562,7 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
     if(inputList.at(i) == "Data"){
       if(cutToApply.Contains("L2nCentralLightJets==2")==1){
 	if(m_converToGeV)
-	  tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply + "&& mtmax<100000.");
+	  tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply + "&&  mljj>120000.");
 	else
 	  tree->Draw( varToPlot + ">>temp"       , weight + cutToApply + "&& mljj>120000.");
       }
