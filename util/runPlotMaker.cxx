@@ -15,16 +15,17 @@ int main(int argc, char** argv)
 {
   // Read user inputs
   string channels     = "none"                               ; vector<string> channelList   ;
-  string regions      = "SR_EE_1j"; vector<string> regionList    ;
-  string variables    = "mlj"                              ; vector<string> variableList  ;
-  string samples      = "Fakes,Zjets,Top,ZV,WW,Higgs,Data"; vector<string> sampleList    ;
+  string regions      = "SR_23jNOmljj"; vector<string> regionList    ;
+  string variables    = "mljj"                              ; vector<string> variableList  ;
+  string samples      = "Higgs,Top,WW,Fakes,ZV,Zjets,Data"; vector<string> sampleList    ;
   string signal       = "130.0_0.0"			    ; vector<string> signalList;
-  string binValues    = "1,0,400"                         ; vector<string> binValueList  ;
-  string systematics  = "EERDOWN,EERUP,EESLOWDOWN,EESLOWUP,EESMATDOWN,EESMATUP,EESPSDOWN,EESPSUP,EESZDOWN,EESZUP,IDDOWN,IDUP,JESDOWN,JESUP,MSDOWN,MSUP,RESOST,SCALESTDOWN,SCALESTUP,ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN,MUREUP"; 
+  string binValues    = "20,0,400"                         ; vector<string> binValueList  ;
+  string systematics  = "EERDOWN,EERUP,EESLOWDOWN,EESLOWUP,EESMATDOWN,EESMATUP,EESPSDOWN,EESPSUP,EESZDOWN,EESZUP,IDDOWN,IDUP,JESDOWN,JESUP,MSDOWN,MSUP,RESOST,SCALESTDOWN,SCALESTUP,ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN,MUREUP,syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_BJETUP,syst_BJETDOWN,syst_XSUP,syst_XSDOWN"; 
   vector<string> systematicList;
-//   "EERDOWN,EERUP,EESLOWDOWN,EESLOWUP,EESMATDOWN,EESMATUP,EESPSDOWN,EESPSUP,EESZDOWN,EESZUP,IDDOWN,IDUP,JESDOWN,JESUP,MSDOWN,MSUP,RESOST,SCALESTDOWN,SCALESTUP,ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN,MUREUP"
+//   "EERDOWN,EERUP,EESLOWDOWN,EESLOWUP,EESMATDOWN,EESMATUP,EESPSDOWN,EESPSUP,EESZDOWN,EESZUP,IDDOWN,IDUP,JESDOWN,JESUP,MSDOWN,MSUP,RESOST,SCALESTDOWN,SCALESTUP,ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN,MUREUP,syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_BJETUP,syst_BJETDOWN,syst_XSUP,syst_XSDOWN"
 //   "SR_EE_1j,SR_EE_23j,SR_MM_1j,SR_MM_23j,SR_EM_1j,SR_EM_23j"
-//   "Fakes,Zjets,Top,ZV,WW,Higgs,Data"
+//   "Higgs,Top,WW,Fakes,ZV,Zjets,Data"
+// syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_BJETUP,syst_BJETDOWN,syst_XSUP,syst_XSDOWN
   
 //   
   bool   convertToGeV = true;

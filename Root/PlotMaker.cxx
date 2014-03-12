@@ -208,11 +208,11 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   nominalAsymErrors->SetLineWidth(2);
   nominalAsymErrors->SetFillStyle(3004);
   nominalAsymErrors->SetFillColor(kBlack);
-  cout << "only statistical error on MC stackHistoMCBg (excl Fakes):" << endl;
-  for(int bin=0; bin < nominalAsymErrors->GetN(); bin++){ 
-    cout << "bin " << bin <<  " EYhigh()= " << nominalAsymErrors->GetEYhigh()[bin] << endl;
-    cout << "bin " << bin <<  " EYlow()=  " << nominalAsymErrors->GetEYlow()[bin] << endl;
-  }
+//   cout << "only statistical error on MC stackHistoMCBg (excl Fakes):" << endl;
+//   for(int bin=0; bin < nominalAsymErrors->GetN(); bin++){ 
+//     cout << "bin " << bin <<  " EYhigh()= " << nominalAsymErrors->GetEYhigh()[bin] << endl;
+//     cout << "bin " << bin <<  " EYlow()=  " << nominalAsymErrors->GetEYlow()[bin] << endl;
+//   }
 
 
   // Add SM Bkg. to the legend
@@ -228,22 +228,22 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   TGraphAsymmErrors* transientMcBg; 
   TGraphAsymmErrors* transientFakes; 
 
-  cout << "histograms[FakesIndex]->Integral()= " << histograms[FakesIndex]->Integral() << endl;
+//   cout << "histograms[FakesIndex]->Integral()= " << histograms[FakesIndex]->Integral() << endl;
   TGraphAsymmErrors*  AsymmErrorsFake = TH1TOTGraph(histograms[FakesIndex]);
-  cout << "only statistical error on Fakes:" << endl;
-    for(int bin=0; bin < AsymmErrorsFake->GetN(); bin++){ 
-    cout << "bin " << bin <<  " EYhigh()= " << AsymmErrorsFake->GetEYhigh()[bin] << endl;
-    cout << "bin " << bin <<  " EYlow()=  " << AsymmErrorsFake->GetEYlow()[bin] << endl;
-  }
-  cout << endl;
-  cout << endl;
-  cout << endl;
-  cout << endl;
+//   cout << "only statistical error on Fakes:" << endl;
+//     for(int bin=0; bin < AsymmErrorsFake->GetN(); bin++){ 
+//     cout << "bin " << bin <<  " EYhigh()= " << AsymmErrorsFake->GetEYhigh()[bin] << endl;
+//     cout << "bin " << bin <<  " EYlow()=  " << AsymmErrorsFake->GetEYlow()[bin] << endl;
+//   }
+//   cout << endl;
+//   cout << endl;
+//   cout << endl;
+//   cout << endl;
 
   TH1D    *sysHistograms[m_sampleList.size()];
   int McBgIndex = -1;
   for(unsigned int i=0; i < m_systematicsList.size(); ++i) {
-    cout << m_systematicsList.at(i) << endl;
+//     cout << m_systematicsList.at(i) << endl;
 
     // Retrieve the histograms
     getHistograms(m_inputROOTFile, observable, cut, sysHistograms, m_systematicsList.at(i), m_sampleList);
@@ -255,7 +255,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
       if(m_sampleList.at(j) != "Fakes"){
 // 	cout << "! Fakes" << endl;
 	if(sysHistograms[j]!=NULL){
-	  cout << m_sampleList.at(j) << " sys Integral " << sysHistograms[j]->Integral(0,-1) << endl;
+// 	  cout << m_sampleList.at(j) << " sys Integral " << sysHistograms[j]->Integral(0,-1) << endl;
 	  totalSysHistoMcBg->Add(sysHistograms[j]);
 	  McBgIndex = j;
 // 	  cout << "added to totalSysHistoMcBg" << endl;	  
@@ -273,7 +273,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     //All MC BG (correlated-> use TH1D, linear) SYS (uncorrelated -> use myAddtoBand(), squared)
     if(McBgIndex>=0){
       transientMcBg = TH1TOTGraph(totalSysHistoMcBg);
-      cout << "myAddtoBand for McBg:" << endl;
+//       cout << "myAddtoBand for McBg:" << endl;
       myAddtoBand(transientMcBg,nominalAsymErrors);
       totalSysHistoMcBg->Reset();
       McBgIndex = -1;
@@ -286,7 +286,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 //       cout << "Fakes sys Integral " << sysHistograms[FakesIndex]->Integral(0,-1) << endl;
 //       cout << "AsymmErrorsFake->Integral()= " << AsymmErrorsFake->Integral() << endl;
       transientFakes = TH1TOTGraph(totalSysHistoFakes);
-      cout << "myAddtoBand for Fakes:" << endl;
+//       cout << "myAddtoBand for Fakes:" << endl;
       myAddtoBand(transientFakes,AsymmErrorsFake);     
 //       FakesIndex = -1;
       totalSysHistoFakes->Reset();
@@ -294,11 +294,11 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 //     cout << m_systematicsList.at(i) << " Integral= "  << totalSysHistoMcBg->Integral() << endl;
 
   }
-  cout << endl;
-  cout << endl;
-  cout << endl;
-  cout << endl;
-  cout << "add MCbg and fakes errors:" << endl;
+//   cout << endl;
+//   cout << endl;
+//   cout << endl;
+//   cout << endl;
+//   cout << "add MCbg and fakes errors:" << endl;
   myTGraphErrorsAdd(nominalAsymErrors,AsymmErrorsFake);
 
 
@@ -361,7 +361,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   histograms[dataIndex]->GetXaxis()->SetLabelSize(0.03);
   histograms[dataIndex]->GetYaxis()->SetTitle(ylabel); 
 //   histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,1000*pow(10,ceil(log(histograms[dataIndex]->GetMaximum())/log(10))));
-    histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,histograms[dataIndex]->GetMaximum()*10);
+    histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,histograms[dataIndex]->GetMaximum()*3);
 
   gPad->RedrawAxis();
 //   gPad->SetLogy(1);
@@ -435,6 +435,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   line          ->Draw();
   ratio         ->Draw("same && P");
   gPad          ->SetGridy(1);
+  
+  cout << "Total = " << ((TH1*)(stackBg->GetStack()->Last()))->Integral() << endl;
 
   TString plotName = channel + "_" + region + "_" + variable + "_test.pdf" ;
   TString plotNameeps = channel + "_" + region + "_" + variable + "_test.eps" ;
@@ -538,23 +540,27 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
       if(inputList == m_sampleList){      
 	//MC BACKGROUND
 	if(inputList.at(i) != "Fakes" ){
-	  if(variation.EqualTo("CENTRAL")){
+// 	  cout << "variation.Contains(syst)= " << variation.Contains("syst") << endl;
+	  if(variation.EqualTo("CENTRAL") || variation.Contains("syst")){
 	    treeName.Form("%s_",inputList.at(i).c_str()); 
 	    treeName += "CENTRAL";
+// 	    cout <<  "treeName= " << treeName << endl;
 	  }
-	  if(variation.Contains("ELFR") || variation.Contains("ELRE") || variation.Contains("MUFR") || variation.Contains("MURE")){
+	  else if(variation.Contains("ELFR") || variation.Contains("ELRE") || variation.Contains("MUFR") || variation.Contains("MURE")){
 	    treeName.Form("%s_",inputList.at(i).c_str()); 
 	    treeName += "CENTRAL";
+// 	    cout <<  "treeName= " << treeName << endl;
 	  }
 	  else{
 	    treeName.Form("%s_",inputList.at(i).c_str()); 
 	    treeName += variation;
+// 	    cout <<  "treeName= " << treeName << endl;
 	  }
 // 	  cout << "MC background " << inputList.at(i) << " treeName= " << treeName << endl;
 	}
 	//FAKE BACKGROUND
 	if(inputList.at(i) == "Fakes"){
-	  if(variation.EqualTo("CENTRAL")){
+	  if(variation.EqualTo("CENTRAL") || variation.Contains("syst")){
 	    treeName.Form("%s_",inputList.at(i).c_str()); 
 	    treeName += "CENTRAL";
 	  }
@@ -566,12 +572,18 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
 	    treeName.Form("%s_",inputList.at(i).c_str()); 
 	    treeName += "CENTRAL";
 	  }
-	  cout << "Fake background " << inputList.at(i) << " treeName= " << treeName << endl;
+// 	  cout << "Fake background " << inputList.at(i) << " treeName= " << treeName << endl;
 	}
       }
       //SIGNAL
       else{
-	treeName = ""; treeName.Form("SSWH8TeV_%s_",m_signalList.at(i).c_str()); treeName += variation;
+	treeName = ""; 
+	if(variation.Contains("syst")){ 
+	  treeName.Form("SSWH8TeV_%s_",m_signalList.at(i).c_str()); treeName += "CENTRAL";
+	}
+	else{
+	  treeName.Form("SSWH8TeV_%s_",m_signalList.at(i).c_str()); treeName += variation;
+	}
 // 	cout << "signal " << inputList.at(i) << " treeName= " << treeName << endl;
       }
     }
@@ -601,20 +613,20 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
       
     //use eventweight for nominal (CENTRAL) and most sytematic variations.
     TString weight;
-    if(!variation.Contains("syst"))weight= "eventweight";
+    if(!variation.Contains("syst") || inputList.at(i) == "Fakes") weight= "eventweight";
     else weight = variation;
-    cout << "weight = " << weight << endl;
+//     cout << "weight = " << weight << endl;
     
     if(inputList.at(i) == "Data"){
       if(cutToApply.Contains("L2nCentralLightJets==2")==1){
 	if(m_converToGeV)
-	  tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply + "&&  mljj>120000.");
+	  tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply + "&& mljj>120000.");
 	else
 	  tree->Draw( varToPlot + ">>temp"       , weight + cutToApply + "&& mljj>120000.");
       }
       else{
       if(m_converToGeV)
-	tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply );
+	tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply + "&& mlj>90000." );
       else
 	tree->Draw( varToPlot + ">>temp"       , weight + cutToApply + "&& Ht<200000.");
       }
