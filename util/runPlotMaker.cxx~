@@ -15,13 +15,13 @@ int main(int argc, char** argv)
 {
   // Read user inputs
   string channels     = "none"                               ; vector<string> channelList   ;
-  string regions      = "SR_1jNOmlj"; vector<string> regionList    ;
+  string regions      = "SR_EM_1j"; vector<string> regionList    ;
   string variables    = "mlj"                              ; vector<string> variableList  ;
   string samples      = "Higgs,Top,WW,Fakes,ZV,Zjets,Data"; vector<string> sampleList    ;
   string signal       = "130.0_0.0"			    ; vector<string> signalList;
-  string binValues    = "20,0,400"                         ; vector<string> binValueList  ;
-  string systematics  = "EERDOWN,EERUP,EESLOWDOWN,EESLOWUP,EESMATDOWN,EESMATUP,EESPSDOWN,EESPSUP,EESZDOWN,EESZUP,IDDOWN,IDUP,JESDOWN,JESUP,MSDOWN,MSUP,RESOST,SCALESTDOWN,SCALESTUP,ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN,MUREUP,syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_BJETUP,syst_BJETDOWN,syst_XSUP,syst_XSDOWN"; 
-  vector<string> systematicList;
+  string binValues    = "1,0,400"                         ; vector<string> binValueList  ;
+  string systematics  = "EESLOWDOWN,EESLOWUP,EESMATDOWN,EESMATUP,EESPSDOWN,EESPSUP,EESZDOWN,EESZUP,IDDOWN,IDUP,JESDOWN,JESUP,MSDOWN,MSUP,RESOST,SCALESTDOWN,SCALESTUP,EERDOWN,EERUP";   vector<string> systematicList;
+  string fakesystematics = "";   vector<string> fakesystematicList;
 //   "EERDOWN,EERUP,EESLOWDOWN,EESLOWUP,EESMATDOWN,EESMATUP,EESPSDOWN,EESPSUP,EESZDOWN,EESZUP,IDDOWN,IDUP,JESDOWN,JESUP,MSDOWN,MSUP,RESOST,SCALESTDOWN,SCALESTUP,ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN,MUREUP,syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_BJETUP,syst_BJETDOWN,syst_XSUP,syst_XSDOWN"
 //   "SR_EE_1j,SR_EE_23j,SR_MM_1j,SR_MM_23j,SR_EM_1j,SR_EM_23j"
 //   "Higgs,Top,WW,Fakes,ZV,Zjets,Data"
@@ -59,6 +59,7 @@ int main(int argc, char** argv)
   cout << "Regions         = " << regions      << endl;
   cout << "Variables       = " << variables    << endl;
   cout << "Systematics     = " << systematics  << endl;
+  cout << "Fake Systematics     = " << fakesystematics  << endl;
   cout << "Samples         = " << samples      << endl;
   cout << "Signal         = " << signal      << endl;
   cout << "Bin Values      = " << binValues    << endl;
@@ -70,9 +71,13 @@ int main(int argc, char** argv)
   tokenizeString(regions    ,regionList    );
   tokenizeString(variables  ,variableList  );
   tokenizeString(systematics,systematicList);
+  tokenizeString(fakesystematics, fakesystematicList);
   tokenizeString(samples    ,sampleList    );
   tokenizeString(signal    ,signalList    );
   tokenizeString(binValues  ,binValueList  );
+  
+  vector<string> fakesampleList;
+  tokenizeString("Fakes"  ,fakesampleList  );
 
   // Plot and Save
   PlotMaker* plots = new PlotMaker();
@@ -80,7 +85,9 @@ int main(int argc, char** argv)
   plots->setInputFileSignal("/data/etp/jwittkowski/hft_processed_Mar_08/Processed/SSWH8TeV.root");
   plots->setSignalList     (signalList    );
   plots->setSampleList     (sampleList    );
+  plots->SetFakeSampleList (fakesampleList);
   plots->setSystematicsList(systematicList);
+  plots->setFakeSystematicsList(fakesystematicList);
   plots->setBinValuesList  (binValueList  );
   plots->setGeVFlag        (convertToGeV  );
 

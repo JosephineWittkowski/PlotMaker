@@ -32,9 +32,15 @@ class PlotMaker {
 
     /// \brief Set-Get Functions for sample list 
     void           setSampleList(vector<string> arg) { m_sampleList = arg;  };
-    vector<string> getSampleList(                
+    vector<string> getSampleList(         ) { return m_sampleList; };       
+    
+    /// \brief Set-Get Functions for sample list 
+    void           SetFakeSampleList(vector<string> arg) { m_fakesampleList = arg;  };
+    vector<string> getFakeSampleList(      ) { return m_fakesampleList; };          
+    
+    
       
-    ) { return m_sampleList; };
+
     /// \brief Set-Get Functions for signal list 
     void           setSignalList(vector<string> arg) { m_signalList = arg;  };
     vector<string> getSignalList(                  ) { return m_signalList; };
@@ -42,6 +48,10 @@ class PlotMaker {
     /// \brief Set-Get Functions for systematics list
     void           setSystematicsList(vector<string> arg) { m_systematicsList = arg;  };
     vector<string> getSystematicsList(                  ) { return m_systematicsList; };
+    
+    /// \brief Set-Get Functions for fake systematics list
+    void           setFakeSystematicsList(vector<string> arg) { m_fakesystematicsList = arg;  };
+    vector<string> getFakeSystematicsList(                  ) { return m_fakesystematicsList; };
 
     /// \brief Set-Get Functions for bin values list
     void           setBinValuesList(vector<string> arg) { m_binValuesList = arg;  };
@@ -74,8 +84,10 @@ class PlotMaker {
     TString        m_inputFile;
     TString        m_inputFileSignal;
     vector<string> m_sampleList;
+    vector<string> m_fakesampleList;
     vector<string> m_signalList;
     vector<string> m_systematicsList;
+    vector<string> m_fakesystematicsList;
     vector<string> m_binValuesList;
     bool           m_converToGeV;
 };

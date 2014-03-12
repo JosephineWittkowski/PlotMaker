@@ -168,9 +168,9 @@ void myTGraphErrorsAdd(TGraphAsymmErrors* g1, TGraphAsymmErrors* g2){
     float y2   = g2->GetY()[i]; 
     float ehy2 = g2->GetEYhigh()[i]; 
     float ely2 = g2->GetEYlow()[i]; 
-//     cout << "y1+y2= " << y1+y2 << endl;
-//     cout << "ehy1= " << ehy1 << " ehy2= " << ehy2 << endl;
-//     cout << "ely1= " << ely1 << " ely2= " << ely2 << endl;
+    cout << "y1+y2= " << y1+y2 << endl;
+    cout << "ehy1= " << ehy1 << " ehy2= " << ehy2 << endl;
+    cout << "ely1= " << ely1 << " ely2= " << ely2 << endl;
     g1->GetY()[i] = y1+y2; 
     g1->GetEYhigh()[i] = sqrt(ehy1*ehy1 + ehy2*ehy2); 
     g1->GetEYlow()[i]  = sqrt(ely1*ehy1 + ely2*ely2); 
@@ -253,7 +253,7 @@ void myAddtoBand(TGraphAsymmErrors* g1, TGraphAsymmErrors* g2) {
     //printf("%d: y1=%f y2=%f Eyhigh= %f Eylow= %f \n",i,y1,y2,EYhigh[i],EYlow[i]);
 
     y0=y1-y2;
-//     cout << "AsymErrors= " << y2 << " transient = " << y1 <<  " diff= " << y0 << endl;
+    cout << "AsymErrors= " << y2 << " transient = " << y1 <<  " diff= " << y0 << endl;
 //     cout << "y0= " << y0 << endl;
     if (y0!=0) {
      if (y0>0){
@@ -261,13 +261,13 @@ void myAddtoBand(TGraphAsymmErrors* g1, TGraphAsymmErrors* g2) {
       eyh=std::sqrt(eyh*eyh+y0*y0);
       //printf("high: %d: y0=%f eyh=%f  \n",i,y0,eyh);
       g2->SetPointEYhigh(i,eyh);
-//       cout << "errorGraph set eyh " << eyh << endl;
+      cout << "errorGraph set eyh " << eyh << endl;
      } else {
       eyl=EYlow[i];
       eyl=std::sqrt(eyl*eyl+y0*y0);
       // printf("low: %d: y0=%f eyl=%f  \n",i,y0,eyl);
       g2->SetPointEYlow (i,eyl);
-//       cout << "errorGraph set eyl " << eyl << endl;
+      cout << "errorGraph set eyl " << eyl << endl;
      }
     }
   }
