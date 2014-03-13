@@ -46,8 +46,8 @@ class PlotMaker {
     vector<string> getSignalList(                  ) { return m_signalList; };
  
     /// \brief Set-Get Functions for systematics list
-    void           setSystematicsList(vector<string> arg) { m_systematicsList = arg;  };
-    vector<string> getSystematicsList(                  ) { return m_systematicsList; };
+    void           setSystematicsList(vector<string> arg) { m_MCsystematicsList = arg;  };
+    vector<string> getSystematicsList(                  ) { return m_MCsystematicsList; };
     
     /// \brief Set-Get Functions for fake systematics list
     void           setFakeSystematicsList(vector<string> arg) { m_fakesystematicsList = arg;  };
@@ -77,7 +77,7 @@ class PlotMaker {
     void           buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors* output);
     
     /// \brief Function to get fake up dn histograms
-    void GetFakeSys(vector<TH1D*> w_fakeUpDnHistograms, TString w_observable, TString w_cut);
+    void GetFakeSys(vector<TH1D*> &w_fakeUpDnHistograms, TString w_observable, TString w_cut);
     
 
   // Private
@@ -90,7 +90,7 @@ class PlotMaker {
     vector<string> m_sampleList;
     vector<string> m_fakesampleList;
     vector<string> m_signalList;
-    vector<string> m_systematicsList;
+    vector<string> m_MCsystematicsList;
     vector<string> m_fakesystematicsList;
     vector<string> m_binValuesList;
     bool           m_converToGeV;

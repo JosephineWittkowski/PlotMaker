@@ -15,17 +15,17 @@ int main(int argc, char** argv)
 {
   // Read user inputs
   string channels     = "none"                               ; vector<string> channelList   ;
-  string regions      = "SR_EM_1jNOmlj"; vector<string> regionList    ;
+  string regions      = "SR_EM_1j"; vector<string> regionList    ;
   string variables    = "mlj"                              ; vector<string> variableList  ;
   string samples      = "ZV,Data"; vector<string> sampleList    ;
-  string fakesamples  = ""; vector<string> fakesampleList    ;
+  string fakesamples  = "Fakes"; vector<string> fakesampleList    ;
   string signal       = "130.0_0.0"			    ; vector<string> signalList;
   string binValues    = "1,0,400"                         ; vector<string> binValueList  ;
-  string systematics  = "EERDOWN,EERUP,EESLOWDOWN,EESLOWUP,EESMATDOWN,EESMATUP,EESPSDOWN,EESPSUP,EESZDOWN,EESZUP,JESDOWN,JESUP,RESOST,SCALESTDOWN,SCALESTUP,ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN,MUREUP";   vector<string> systematicList;
-  string fakesystematics = "ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN,MUREUP";   vector<string> fakesystematicList;
+  string MCsystematics  = "SCALESTUP";   vector<string> MCsystematicList;
+  string fakesystematics = "ELFRDOWN";   vector<string> fakesystematicList;
 //   "IDDOWN,IDUP,MSDOWN,MSUP,EERDOWN,EERUP,EESLOWDOWN,EESLOWUP,EESMATDOWN,EESMATUP,EESPSDOWN,EESPSUP,EESZDOWN,EESZUP,JESDOWN,JESUP,RESOST,SCALESTDOWN,SCALESTUP,ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN,MUREUP,syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_BJETUP,syst_BJETDOWN,syst_XSUP,syst_XSDOWN"
 //   "SR_EE_1j,SR_EE_23j,SR_MM_1j,SR_MM_23j,SR_EM_1j,SR_EM_23j"
-//   "Higgs,Top,WW,Fakes,ZV,Zjets,Data"
+//   "Higgs,Top,WW,ZV,Zjets,Data"
 // syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_BJETUP,syst_BJETDOWN,syst_XSUP,syst_XSDOWN
   
 //   
@@ -38,8 +38,8 @@ int main(int argc, char** argv)
       regions      = argv[++i];
     else if (strcmp(argv[i], "--variables") == 0)
       variables    = argv[++i];
-    else if (strcmp(argv[i], "--systematics") == 0)
-      systematics  = argv[++i];
+    else if (strcmp(argv[i], "--mcsystematics") == 0)
+      MCsystematics  = argv[++i];
     else if (strcmp(argv[i], "--samples") == 0)
       samples      = argv[++i];
     else if (strcmp(argv[i], "--binValues") == 0)
@@ -59,7 +59,7 @@ int main(int argc, char** argv)
   cout << "Channels        = " << channels     << endl;
   cout << "Regions         = " << regions      << endl;
   cout << "Variables       = " << variables    << endl;
-  cout << "Systematics     = " << systematics  << endl;
+  cout << "MC Systematics     = " << MCsystematics  << endl;
   cout << "Fake Systematics     = " << fakesystematics  << endl;
   cout << "Samples         = " << samples      << endl;
   cout << "Signal         = " << signal      << endl;
@@ -71,7 +71,7 @@ int main(int argc, char** argv)
   tokenizeString(channels   ,channelList   );
   tokenizeString(regions    ,regionList    );
   tokenizeString(variables  ,variableList  );
-  tokenizeString(systematics,systematicList);
+  tokenizeString(MCsystematics,MCsystematicList);
   tokenizeString(fakesystematics, fakesystematicList);
   tokenizeString(samples    ,sampleList    );
   tokenizeString(fakesamples  ,fakesampleList  );
@@ -87,7 +87,7 @@ int main(int argc, char** argv)
   plots->setSignalList     (signalList    );
   plots->setSampleList     (sampleList    );
   plots->SetFakeSampleList (fakesampleList);
-  plots->setSystematicsList(systematicList);
+  plots->setMCSystematicsList(MCsystematicList);
   plots->setFakeSystematicsList(fakesystematicList);
   plots->setBinValuesList  (binValueList  );
   plots->setGeVFlag        (convertToGeV  );

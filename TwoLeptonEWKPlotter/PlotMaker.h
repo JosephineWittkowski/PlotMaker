@@ -46,8 +46,8 @@ class PlotMaker {
     vector<string> getSignalList(                  ) { return m_signalList; };
  
     /// \brief Set-Get Functions for systematics list
-    void           setSystematicsList(vector<string> arg) { m_systematicsList = arg;  };
-    vector<string> getSystematicsList(                  ) { return m_systematicsList; };
+    void           setMCSystematicsList(vector<string> arg) { m_MCsystematicsList = arg;  };
+    vector<string> getMCSystematicsList(                  ) { return m_MCsystematicsList; };
     
     /// \brief Set-Get Functions for fake systematics list
     void           setFakeSystematicsList(vector<string> arg) { m_fakesystematicsList = arg;  };
@@ -90,7 +90,7 @@ class PlotMaker {
     vector<string> m_sampleList;
     vector<string> m_fakesampleList;
     vector<string> m_signalList;
-    vector<string> m_systematicsList;
+    vector<string> m_MCsystematicsList;
     vector<string> m_fakesystematicsList;
     vector<string> m_binValuesList;
     bool           m_converToGeV;
