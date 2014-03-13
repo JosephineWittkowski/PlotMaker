@@ -75,6 +75,10 @@ class PlotMaker {
 
     /// \brief Function to build the ratio's error band
     void           buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors* output);
+    
+    /// \brief Function to get fake up dn histograms
+    void GetFakeSys(vector<TH1D*> &w_fakeUpDnHistograms, TString w_observable, TString w_cut);
+    
 
   // Private
   private:
@@ -90,6 +94,7 @@ class PlotMaker {
     vector<string> m_fakesystematicsList;
     vector<string> m_binValuesList;
     bool           m_converToGeV;
+    TH1D* m_fakeHistogram;
 };
 
 #endif 

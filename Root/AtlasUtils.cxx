@@ -260,14 +260,16 @@ void myAddtoBand(TGraphAsymmErrors* g1, TGraphAsymmErrors* g2) {
       eyh=EYhigh[i];
       eyh=std::sqrt(eyh*eyh+y0*y0);
       //printf("high: %d: y0=%f eyh=%f  \n",i,y0,eyh);
+      cout << "errorGraph set eyh from " << EYhigh[i];
       g2->SetPointEYhigh(i,eyh);
-      cout << "errorGraph set eyh " << eyh << endl;
+       cout << " to " << eyh << endl;
      } else {
       eyl=EYlow[i];
       eyl=std::sqrt(eyl*eyl+y0*y0);
       // printf("low: %d: y0=%f eyl=%f  \n",i,y0,eyl);
+      cout << "errorGraph set eyl from " << EYlow[i];
       g2->SetPointEYlow (i,eyl);
-      cout << "errorGraph set eyl " << eyl << endl;
+      cout << " to " << eyl << endl;
      }
     }
   }

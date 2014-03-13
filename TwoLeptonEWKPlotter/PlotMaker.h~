@@ -32,15 +32,15 @@ class PlotMaker {
 
     /// \brief Set-Get Functions for sample list 
     void           setSampleList(vector<string> arg) { m_sampleList = arg;  };
-    vector<string> getSampleList(            
+    vector<string> getSampleList(         ) { return m_sampleList; };       
     
     /// \brief Set-Get Functions for sample list 
     void           SetFakeSampleList(vector<string> arg) { m_fakesampleList = arg;  };
-    vector<string> getFakeSampleList(            
+    vector<string> getFakeSampleList(      ) { return m_fakesampleList; };          
     
     
       
-    ) { return m_sampleList; };
+
     /// \brief Set-Get Functions for signal list 
     void           setSignalList(vector<string> arg) { m_signalList = arg;  };
     vector<string> getSignalList(                  ) { return m_signalList; };
@@ -75,6 +75,10 @@ class PlotMaker {
 
     /// \brief Function to build the ratio's error band
     void           buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors* output);
+    
+    /// \brief Function to get fake up dn histograms
+    void GetFakeSys(vector<TH1D*> w_fakeUpDnHistograms, TString w_observable, TString w_cut);
+    
 
   // Private
   private:
@@ -90,6 +94,7 @@ class PlotMaker {
     vector<string> m_fakesystematicsList;
     vector<string> m_binValuesList;
     bool           m_converToGeV;
+    TH1D* m_fakeHistogram;
 };
 
 #endif 

@@ -15,16 +15,17 @@ int main(int argc, char** argv)
 {
   // Read user inputs
   string channels     = "none"                               ; vector<string> channelList   ;
-  string regions      = "SR_EM_1j"; vector<string> regionList    ;
+  string regions      = "SR_EM_1jNOmlj"; vector<string> regionList    ;
   string variables    = "mlj"                              ; vector<string> variableList  ;
-  string samples      = "Higgs,Top,WW,Fakes,ZV,Zjets,Data"; vector<string> sampleList    ;
+  string samples      = "ZV,Data"; vector<string> sampleList    ;
+  string fakesamples  = ""; vector<string> fakesampleList    ;
   string signal       = "130.0_0.0"			    ; vector<string> signalList;
   string binValues    = "1,0,400"                         ; vector<string> binValueList  ;
-  string systematics  = "EESLOWDOWN";   vector<string> systematicList;
-  string fakesystematics = "";   vector<string> fakesystematicList;
-//   "EERDOWN,EERUP,EESLOWDOWN,EESLOWUP,EESMATDOWN,EESMATUP,EESPSDOWN,EESPSUP,EESZDOWN,EESZUP,IDDOWN,IDUP,JESDOWN,JESUP,MSDOWN,MSUP,RESOST,SCALESTDOWN,SCALESTUP,ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN,MUREUP,syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_BJETUP,syst_BJETDOWN,syst_XSUP,syst_XSDOWN"
+  string systematics  = "EERDOWN,EERUP,EESLOWDOWN,EESLOWUP,EESMATDOWN,EESMATUP,EESPSDOWN,EESPSUP,EESZDOWN,EESZUP,JESDOWN,JESUP,RESOST,SCALESTDOWN,SCALESTUP,ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN,MUREUP";   vector<string> systematicList;
+  string fakesystematics = "ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN,MUREUP";   vector<string> fakesystematicList;
+//   "IDDOWN,IDUP,MSDOWN,MSUP,EERDOWN,EERUP,EESLOWDOWN,EESLOWUP,EESMATDOWN,EESMATUP,EESPSDOWN,EESPSUP,EESZDOWN,EESZUP,JESDOWN,JESUP,RESOST,SCALESTDOWN,SCALESTUP,ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN,MUREUP,syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_BJETUP,syst_BJETDOWN,syst_XSUP,syst_XSDOWN"
 //   "SR_EE_1j,SR_EE_23j,SR_MM_1j,SR_MM_23j,SR_EM_1j,SR_EM_23j"
-//   "Higgs,Top,WW,Fakes,ZV,Zjets,Data"
+//   "Higgs,Top,WW,ZV,Zjets,Data"
 // syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_BJETUP,syst_BJETDOWN,syst_XSUP,syst_XSDOWN
   
 //   
@@ -73,11 +74,11 @@ int main(int argc, char** argv)
   tokenizeString(systematics,systematicList);
   tokenizeString(fakesystematics, fakesystematicList);
   tokenizeString(samples    ,sampleList    );
+  tokenizeString(fakesamples  ,fakesampleList  );
   tokenizeString(signal    ,signalList    );
   tokenizeString(binValues  ,binValueList  );
   
-  vector<string> fakesampleList;
-  tokenizeString("Fakes"  ,fakesampleList  );
+  
 
   // Plot and Save
   PlotMaker* plots = new PlotMaker();
