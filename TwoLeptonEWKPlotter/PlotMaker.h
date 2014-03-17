@@ -60,6 +60,10 @@ class PlotMaker {
     /// \brief Set-Get Functions for GeV Flag
     void           setGeVFlag(bool arg) { m_converToGeV = arg;  };
     bool           getGeVFlag(        ) { return m_converToGeV; };         
+    
+    /// \brief Set-Get Functions for WZ Flag
+    void           setWZFlag(bool arg) { m_addWZuncert = arg;  };
+    bool           getWZFlag(        ) { return m_addWZuncert; };   
 
     /// \brief Main Function that plots and saves histograms
     void           generatePlot(TString channel,TString region,TString variable);
@@ -74,7 +78,7 @@ class PlotMaker {
     void           convertErrorsToPoisson(TH1* inputHisto, TGraphAsymmErrors* outputGraph);
 
     /// \brief Function to build the ratio's error band
-    void           buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors* output);
+    void           buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors* output, int w_ZVIndex);
     
     /// \brief Function to get fake up dn histograms
     void GetFakeSys(vector<TH1D*> &w_fakeUpDnHistograms, TString w_observable, TString w_cut);
@@ -94,7 +98,11 @@ class PlotMaker {
     vector<string> m_fakesystematicsList;
     vector<string> m_binValuesList;
     bool           m_converToGeV;
+    bool           m_addWZuncert;
     TH1D* m_fakeHistogram;
+    TH1D* m_ZVHistogram;
+    bool m_dbg;
+    bool m_eventyield;
 };
 
 #endif 

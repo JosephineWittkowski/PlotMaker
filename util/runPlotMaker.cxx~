@@ -17,19 +17,22 @@ int main(int argc, char** argv)
   string channels     = "none"                               ; vector<string> channelList   ;
   string regions      = "SR_EM_1j"; vector<string> regionList    ;
   string variables    = "mlj"                              ; vector<string> variableList  ;
-  string samples      = "ZV,Data"; vector<string> sampleList    ;
-  string fakesamples  = "Fakes"; vector<string> fakesampleList    ;
+  string samples      = "ZV,WW,Data"; vector<string> sampleList    ;
+  string fakesamples  = ""; vector<string> fakesampleList    ;
   string signal       = "130.0_0.0"			    ; vector<string> signalList;
-  string binValues    = "1,0,400"                         ; vector<string> binValueList  ;
-  string MCsystematics  = "SCALESTUP";   vector<string> MCsystematicList;
-  string fakesystematics = "ELFRDOWN";   vector<string> fakesystematicList;
+  string binValues    = "5,0,300"                         ; vector<string> binValueList  ;
+  string MCsystematics  = "syst_BKGMETHODUP";   vector<string> MCsystematicList;
+  string fakesystematics = "";   vector<string> fakesystematicList;
+  
+  bool   convertToGeV = true;
+  bool add_WZ_uncertainty = false;
 //   "IDDOWN,IDUP,MSDOWN,MSUP,EERDOWN,EERUP,EESLOWDOWN,EESLOWUP,EESMATDOWN,EESMATUP,EESPSDOWN,EESPSUP,EESZDOWN,EESZUP,JESDOWN,JESUP,RESOST,SCALESTDOWN,SCALESTUP,ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN,MUREUP,syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_BJETUP,syst_BJETDOWN,syst_XSUP,syst_XSDOWN"
 //   "SR_EE_1j,SR_EE_23j,SR_MM_1j,SR_MM_23j,SR_EM_1j,SR_EM_23j"
 //   "Higgs,Top,WW,ZV,Zjets,Data"
 // syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_BJETUP,syst_BJETDOWN,syst_XSUP,syst_XSDOWN
   
 //   
-  bool   convertToGeV = true;
+  
 
   for(int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "--channels") == 0)
@@ -65,6 +68,7 @@ int main(int argc, char** argv)
   cout << "Signal         = " << signal      << endl;
   cout << "Bin Values      = " << binValues    << endl;
   cout << "Convert to GeV  = " << convertToGeV << endl;
+  cout << "add WZ uncertainty of 17.4% " << add_WZ_uncertainty << endl;
   cout << "=======================================================" << endl;
 
   // Tokenize inputs
@@ -82,8 +86,8 @@ int main(int argc, char** argv)
 
   // Plot and Save
   PlotMaker* plots = new PlotMaker();
-  plots->setInputFile("/data/etp/jwittkowski/hft_processed_Mar_08/Processed/SSBG8TeV.root");
-  plots->setInputFileSignal("/data/etp/jwittkowski/hft_processed_Mar_08/Processed/SSWH8TeV.root");
+  plots->setInputFile("/data/etp/jwittkowski/hft_processed_Mar_13/Processed/SSBG8TeV.root");
+  plots->setInputFileSignal("/data/etp/jwittkowski/hft_processed_Mar_13/Processed/SSWH8TeV.root");
   plots->setSignalList     (signalList    );
   plots->setSampleList     (sampleList    );
   plots->SetFakeSampleList (fakesampleList);
@@ -91,6 +95,7 @@ int main(int argc, char** argv)
   plots->setFakeSystematicsList(fakesystematicList);
   plots->setBinValuesList  (binValueList  );
   plots->setGeVFlag        (convertToGeV  );
+  plots->setWZFlag 	   (add_WZ_uncertainty);
 
   // Loop over all combinations
   for(unsigned ii = 0; ii < channelList.size(); ++ii) {
