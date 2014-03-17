@@ -20,6 +20,7 @@
 #include "TCanvas.h"
 #include "TPad.h"
 #include "TLegend.h"
+#include "TArrow.h"
 
 #include <stdlib.h> 
 
@@ -43,6 +44,21 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   
   m_dbg = true;
   m_eventyield = false;
+  
+  string DataBlindCut;
+  string AnD = " && ";
+  DataBlindCut.append(AnD);
+  DataBlindCut.append(variable);
+  string larger = " > ";
+  DataBlindCut.append(larger);
+  char buffer[20];
+//   float cutBlindData = 90000.;
+  sprintf(buffer, "%f", m_dataBlindCut);
+  DataBlindCut.append(buffer);
+//   cout << "DataBlindCut= " << DataBlindCut << endl;
+  TString finalDataBlindCut = "";
+  if(m_dataBlindCut>0.) finalDataBlindCut = DataBlindCut;
+
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // Print information
@@ -74,6 +90,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     cout << m_signalList.at(i) << " ";
   }
   cout << endl;
+  
+  cout << "finalDataBlindCut= " << finalDataBlindCut << endl;
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // Open the input ROOT file
@@ -139,7 +157,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   ////////////////////////////////////////////////////////////////////////////////////////
   // Get signal histogram(s)
   TH1D    *histograms_signal[m_signalList.size()];
-  getHistograms(m_signalROOTFile, observable, cut, histograms_signal,"CENTRAL", m_signalList);
+  getHistograms(m_signalROOTFile, observable, cut, finalDataBlindCut, histograms_signal,"CENTRAL", m_signalList);
   
   //set style for signal sample(s)
   for(unsigned int i=0; i<m_signalList.size(); ++i) {
@@ -154,11 +172,11 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   
   // Get the central histograms 
   TH1D    *histograms[m_sampleList.size()];
-  getHistograms(m_inputROOTFile, observable, cut, histograms,"CENTRAL", m_sampleList);
+  getHistograms(m_inputROOTFile, observable, cut, finalDataBlindCut, histograms,"CENTRAL", m_sampleList);
   
   // Get the central fake histogram
   TH1D    *fakehistograms[m_fakesampleList.size()];
-  getHistograms(m_inputROOTFile, observable, cut, fakehistograms,"CENTRAL", m_fakesampleList);
+  getHistograms(m_inputROOTFile, observable, cut, finalDataBlindCut, fakehistograms,"CENTRAL", m_fakesampleList);
   if(m_fakesampleList.size()>0) m_fakeHistogram = (TH1D*) fakehistograms[0]->Clone();
   
   
@@ -250,6 +268,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   TH1D* stackHistoMCBg = (TH1D*) stackMCBg->GetStack()->Last();
 
   TGraphAsymmErrors* nominalAsymErrorsMCBg = TH1TOTGraph(stackHistoMCBg);
+  cout << "nominalAsymErrorsMCBg->GetY()[0]= " << nominalAsymErrorsMCBg->GetY()[0] << endl;
   nominalAsymErrorsMCBg->SetMarkerSize(0);
   nominalAsymErrorsMCBg->SetLineWidth(2);
   nominalAsymErrorsMCBg->SetFillStyle(3004);
@@ -289,7 +308,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   for(unsigned int i=0; i < m_MCsystematicsList.size(); ++i) {
 
     // Retrieve the syshistograms
-    getHistograms(m_inputROOTFile, observable, cut, sysHistograms, m_MCsystematicsList.at(i), m_sampleList);
+    getHistograms(m_inputROOTFile, observable, cut, finalDataBlindCut, sysHistograms, m_MCsystematicsList.at(i), m_sampleList);
 
     // Loop over samples and add to total systematics histo
     for(unsigned int j=0; j < m_sampleList.size(); ++j) {      
@@ -316,11 +335,13 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 
   }
   
+  cout << "nominalAsymErrorsMCBg->GetY()[0]= " << nominalAsymErrorsMCBg->GetY()[0] << endl;
+  
   // 3) to include stat error of fake histos, use myTGraphErrorsAdd() method to add fake_histo (= stat errors) to 'nominalAsymErrorsMCBg'.
-  TGraphAsymmErrors* nominalAsymmErrorsFake = TH1TOTGraph(m_fakeHistogram);
-  myTGraphErrorsAdd(nominalAsymErrorsMCBg,nominalAsymmErrorsFake );
-
     if(m_fakesampleList.size() > 0 && m_fakesystematicsList.size()>0){
+      TGraphAsymmErrors* nominalAsymmErrorsFake = TH1TOTGraph(m_fakeHistogram);
+      myTGraphErrorsAdd(nominalAsymErrorsMCBg,nominalAsymmErrorsFake );
+      cout << "nominalAsymErrorsMCBg->GetY()[0]= " << nominalAsymErrorsMCBg->GetY()[0] << endl;
       vector<TH1D*> FakeUpDnHistograms;
       TH1D* sys0 = (TH1D*) m_fakeHistogram->Clone();
       TH1D* sys1 = (TH1D*) m_fakeHistogram->Clone();
@@ -330,7 +351,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
       FakeUpDnHistograms.push_back(sys1);
       
       // 4) for fakes, don't consider stat error any more (already included!). Loop over each bin for all fake sys and add difference to nominal event yield to yhigh or ylow (in GetFakeSys() method)
-      GetFakeSys(FakeUpDnHistograms, observable, cut);
+      GetFakeSys(FakeUpDnHistograms, observable, cut, finalDataBlindCut);
       if(m_dbg){
 	for(int i=1; i<FakeUpDnHistograms[0]->GetNbinsX()+1; i++){
 	  cout << "bin " << i-1 << endl;
@@ -397,6 +418,15 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   Data                 ->Draw("same && p");
   histograms_signal[0]->Draw("hists same");
   legend               ->Draw();
+  
+
+  TArrow* arrow = new TArrow(m_dataBlindCut/1000.,0,m_dataBlindCut/1000.,histograms[dataIndex]->GetMaximum()*3,0.03,"<|");
+  arrow->SetLineWidth(3);
+  arrow->SetAngle(40);
+  arrow->SetLineColor(kRed);
+  arrow->SetFillColor(kRed);
+  arrow->SetLineWidth(2);
+  if(m_dataBlindCut > 0.)arrow->Draw("");
 
   // Set a few fancy labels and set axis ranges
   TString ylabel = "";
@@ -582,7 +612,7 @@ void PlotMaker::convertErrorsToPoisson(TH1* histo, TGraphAsymmErrors* graph)
 }
 
 /// \brief Function to get higstograms
-void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToApply, TH1D* histos[], TString variation, vector<string> inputList)
+void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToApply, TString dataBlindCut, TH1D* histos[], TString variation, vector<string> inputList)
 {
   // Initialize the temp histogram
   TH1D *temp = new TH1D("temp","temp",atof(m_binValuesList.at(0).c_str()),
@@ -672,32 +702,34 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
      
       
     //use eventweight for nominal (CENTRAL) and most sytematic variations. Else use weight == variation.
-    TString weight;
-    if(!variation.Contains("syst") || inputList.at(i) == "Fakes") weight= "eventweight";
-    else weight = variation;
-    
+    TString weight = " * eventweight";
+    TString additionalWeight = "1";
+    if(variation.Contains("syst")) additionalWeight= variation;
+//     else weight = variation;
+    if(m_dbg) cout << "weight= " << weight << endl;
     //eventually additional cut for data to blind it in SR.
+//     cout << "additionalWeight + weight + cutToApply + dataBlindCut= " << additionalWeight + weight + cutToApply + dataBlindCut << endl;
     if(inputList.at(i) == "Data"){
       if(cutToApply.Contains("L2nCentralLightJets==2")==1){
 	if(m_converToGeV)
-	  tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply/* + "&& mljj>120000."*/);
+	  tree->Draw( varToPlot + "/1000.>>temp" , additionalWeight + weight + cutToApply + dataBlindCut/* + "&& mljj>120000."*/);
 	else
-	  tree->Draw( varToPlot + ">>temp"       , weight + cutToApply + "&& mljj>120000.");
+	  tree->Draw( varToPlot + ">>temp"       , additionalWeight + weight + cutToApply + dataBlindCut);
       }
       else{
       if(m_converToGeV)
-	tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply/* + "&& mlj>90000." */);
+	tree->Draw( varToPlot + "/1000.>>temp" , additionalWeight + weight + cutToApply + dataBlindCut/* + "&& mlj>90000." */);
       else
-	tree->Draw( varToPlot + ">>temp"       , weight + cutToApply + "&& Ht<200000.");
+	tree->Draw( varToPlot + ">>temp"       , additionalWeight + weight + cutToApply + dataBlindCut);
       }
     }
     else{
       if(m_converToGeV){
-	tree->Draw( varToPlot + "/1000.>>temp" , weight + cutToApply );
+	tree->Draw( varToPlot + "/1000.>>temp" , additionalWeight + weight + cutToApply );
 //       	cout << "cutToApply= " << cutToApply << endl;
       }
       else
-	tree->Draw( varToPlot + ">>temp"       , weight + cutToApply);
+	tree->Draw( varToPlot + ">>temp"       , additionalWeight + weight + cutToApply);
     }
 
     // Clone and beautify
@@ -749,7 +781,7 @@ void PlotMaker::buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors*
   }
 }
 
-  void PlotMaker::GetFakeSys(vector<TH1D*> &w_fakeUpDnHistograms, TString w_observable, TString w_cut){
+  void PlotMaker::GetFakeSys(vector<TH1D*> &w_fakeUpDnHistograms, TString w_observable, TString w_cut, TString w_dataBlindCut){
   
     if(m_dbg) cout << "m_fakeHistogram->Integral(0,-1)= " << m_fakeHistogram->Integral(0,-1) << endl;
     TH1D* fake_histo_up = (TH1D*) m_fakeHistogram->Clone();
@@ -767,8 +799,8 @@ void PlotMaker::buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors*
 	if(m_dbg) cout << "m_fakesystematicsList.at(i)= " << m_fakesystematicsList.at(i) << endl;
 	TH1D    *fakesysHistograms[m_sampleList.size()];
 	
-	
-	getHistograms(m_inputROOTFile, w_observable, w_cut, fakesysHistograms, m_fakesystematicsList.at(i), m_fakesampleList);
+
+	getHistograms(m_inputROOTFile, w_observable, w_cut, w_dataBlindCut, fakesysHistograms, m_fakesystematicsList.at(i), m_fakesampleList);
 
 	float shift = fakesysHistograms[0]->GetBinContent(bin);
 	if(m_dbg) cout << "shift= " << shift << endl;

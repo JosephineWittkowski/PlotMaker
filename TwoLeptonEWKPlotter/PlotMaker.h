@@ -63,7 +63,13 @@ class PlotMaker {
     
     /// \brief Set-Get Functions for WZ Flag
     void           setWZFlag(bool arg) { m_addWZuncert = arg;  };
-    bool           getWZFlag(        ) { return m_addWZuncert; };   
+    bool           getWZFlag(        ) { return m_addWZuncert; };
+    
+    /// \brief Set-Get Functions for WZ Flag
+    void           setDataBlindCut(float arg) { m_dataBlindCut = arg;  };
+    bool           getDataBlindCut(        ) { return m_dataBlindCut; };  
+    
+    
 
     /// \brief Main Function that plots and saves histograms
     void           generatePlot(TString channel,TString region,TString variable);
@@ -72,7 +78,7 @@ class PlotMaker {
     void           addOverFlowToLastBin(TH1* arg);
 
     /// \brief Function to get central histogmras
-    void           getHistograms(TFile* inputRootFile, TString variable, TString cut, TH1D* histos[], TString variation, vector<string> inputList);
+    void           getHistograms(TFile* input, TString varToPlot, TString cutToApply, TString dataBlindCut, TH1D* histos[], TString variation, vector<string> inputList);
 
     /// \brief Function to add overflow to last bin
     void           convertErrorsToPoisson(TH1* inputHisto, TGraphAsymmErrors* outputGraph);
@@ -81,7 +87,7 @@ class PlotMaker {
     void           buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors* output, int w_ZVIndex);
     
     /// \brief Function to get fake up dn histograms
-    void GetFakeSys(vector<TH1D*> &w_fakeUpDnHistograms, TString w_observable, TString w_cut);
+    void GetFakeSys(vector<TH1D*> &w_fakeUpDnHistograms, TString w_observable, TString w_cut, TString w_dataBlindCut);
     
 
   // Private
@@ -99,6 +105,7 @@ class PlotMaker {
     vector<string> m_binValuesList;
     bool           m_converToGeV;
     bool           m_addWZuncert;
+    float          m_dataBlindCut;
     TH1D* m_fakeHistogram;
     TH1D* m_ZVHistogram;
     bool m_dbg;

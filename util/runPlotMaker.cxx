@@ -17,12 +17,13 @@ int main(int argc, char** argv)
   string channels     = "none"                               ; vector<string> channelList   ;
   string regions      = "SR_EM_1j"; vector<string> regionList    ;
   string variables    = "mlj"                              ; vector<string> variableList  ;
-  string samples      = "ZV,WW,Data"; vector<string> sampleList    ;
-  string fakesamples  = ""; vector<string> fakesampleList    ;
+  string samples      = "Higgs,Top,WW,ZV,Zjets,Data"; vector<string> sampleList    ;
+  string fakesamples  = "Fakes"; vector<string> fakesampleList    ;
   string signal       = "130.0_0.0"			    ; vector<string> signalList;
   string binValues    = "1,0,300"                         ; vector<string> binValueList  ;
-  string MCsystematics  = "syst_BKGMETHODUP";   vector<string> MCsystematicList;
-  string fakesystematics = "";   vector<string> fakesystematicList;
+  string MCsystematics  = "syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_BJETUP,syst_BJETDOWN,syst_XSUP,syst_XSDOWN";   vector<string> MCsystematicList;
+  string fakesystematics = "ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN,MUREUP";   vector<string> fakesystematicList;
+  float dataBlindCut = 0.;
   
   bool   convertToGeV = true;
   bool add_WZ_uncertainty = false;
@@ -96,6 +97,7 @@ int main(int argc, char** argv)
   plots->setBinValuesList  (binValueList  );
   plots->setGeVFlag        (convertToGeV  );
   plots->setWZFlag 	   (add_WZ_uncertainty);
+  plots->setDataBlindCut   (dataBlindCut);
 
   // Loop over all combinations
   for(unsigned ii = 0; ii < channelList.size(); ++ii) {

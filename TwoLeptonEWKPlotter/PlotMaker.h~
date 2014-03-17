@@ -72,7 +72,7 @@ class PlotMaker {
     void           addOverFlowToLastBin(TH1* arg);
 
     /// \brief Function to get central histogmras
-    void           getHistograms(TFile* inputRootFile, TString variable, TString cut, TH1D* histos[], TString variation, vector<string> inputList);
+    void           getHistograms(TFile* input, TString varToPlot, TString cutToApply, TString dataBlindCut, TH1D* histos[], TString variation, vector<string> inputList);
 
     /// \brief Function to add overflow to last bin
     void           convertErrorsToPoisson(TH1* inputHisto, TGraphAsymmErrors* outputGraph);
@@ -81,7 +81,7 @@ class PlotMaker {
     void           buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors* output, int w_ZVIndex);
     
     /// \brief Function to get fake up dn histograms
-    void GetFakeSys(vector<TH1D*> &w_fakeUpDnHistograms, TString w_observable, TString w_cut);
+    void GetFakeSys(vector<TH1D*> &w_fakeUpDnHistograms, TString w_observable, TString w_cut, TString w_dataBlindCut);
     
 
   // Private
@@ -102,6 +102,7 @@ class PlotMaker {
     TH1D* m_fakeHistogram;
     TH1D* m_ZVHistogram;
     bool m_dbg;
+    bool m_eventyield;
 };
 
 #endif 
