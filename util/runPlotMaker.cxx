@@ -21,8 +21,8 @@ int main(int argc, char** argv)
   string fakesamples  = "Fakes"; vector<string> fakesampleList    ;
   string signal       = "130.0_0.0"			    ; vector<string> signalList;
   string binValues    = "1,0,300"                         ; vector<string> binValueList  ;
-  string MCsystematics  = "syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_BJETUP,syst_BJETDOWN,syst_XSUP,syst_XSDOWN";   vector<string> MCsystematicList;
-  string fakesystematics = "ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN,MUREUP";   vector<string> fakesystematicList;
+  string MCsystematics  = "syst_XSUP";   vector<string> MCsystematicList;
+  string fakesystematics = "";   vector<string> fakesystematicList;
   float dataBlindCut = 0.;
   
   bool   convertToGeV = true;

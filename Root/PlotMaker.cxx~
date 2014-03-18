@@ -338,7 +338,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   cout << "nominalAsymErrorsMCBg->GetY()[0]= " << nominalAsymErrorsMCBg->GetY()[0] << endl;
   
   // 3) to include stat error of fake histos, use myTGraphErrorsAdd() method to add fake_histo (= stat errors) to 'nominalAsymErrorsMCBg'.
-    if(m_fakesampleList.size() > 0 && m_fakesystematicsList.size()>0){
+    if(m_fakesampleList.size() > 0/* && m_fakesystematicsList.size()>0*/){
       TGraphAsymmErrors* nominalAsymmErrorsFake = TH1TOTGraph(m_fakeHistogram);
       myTGraphErrorsAdd(nominalAsymErrorsMCBg,nominalAsymmErrorsFake );
       cout << "nominalAsymErrorsMCBg->GetY()[0]= " << nominalAsymErrorsMCBg->GetY()[0] << endl;
@@ -379,6 +379,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 	totalSysHistoBg->Reset();
       }
     }
+    
+    cout << "nominalAsymErrorsMCBg->GetY()[0]= " << nominalAsymErrorsMCBg->GetY()[0] << endl;
   
 
 // 6) final error includes stats of MC bg, stats of fake bg, sys of MC bg and sys of fake bg. Everything is added squared (uncorrelated) except for individual MC bg components or simply adding EE, EM and MM if wanted. ('regions and processes' are correlated. Everything else is uncorrelated. )
@@ -398,6 +400,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 	if(m_dbg) cout << "ey_low set from " << ey_low << " to " << sqrt(pow(ey_low, 2) + pow( 0.174*m_ZVHistogram->GetBinContent(bin+1),2)) << endl;
       }
     }
+    
+    cout << "nominalAsymErrorsMCBg->GetY()[0]= " << nominalAsymErrorsMCBg->GetY()[0] << endl;
 
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -786,6 +790,8 @@ void PlotMaker::buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors*
     if(m_dbg) cout << "m_fakeHistogram->Integral(0,-1)= " << m_fakeHistogram->Integral(0,-1) << endl;
     TH1D* fake_histo_up = (TH1D*) m_fakeHistogram->Clone();
     TH1D* fake_histo_dn = (TH1D*)m_fakeHistogram->Clone();
+    fake_histo_up->Reset();
+    fake_histo_dn->Reset();
     if(m_dbg) cout << "fakes:" << endl;
     for(int bin=1; bin<m_fakeHistogram->GetNbinsX()+1; ++bin){
       cout << "bin " << bin-1 << endl;
@@ -814,7 +820,7 @@ void PlotMaker::buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors*
     }
     
     fake_histo_up->Add(m_fakeHistogram);
-    if(m_dbg) cout << "fake_histo_up->Integral()= " << fake_histo_up->Integral() << endl;
+    
     TH1D* _htmp = (TH1D*) m_fakeHistogram->Clone();
     _htmp->Add(fake_histo_dn,-1);
     fake_histo_dn->Reset();
@@ -822,6 +828,13 @@ void PlotMaker::buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors*
     _htmp->Delete();
     w_fakeUpDnHistograms[0] = fake_histo_up;
     w_fakeUpDnHistograms[1] = fake_histo_dn;
+    
+    //if no fake sys given, reset the fake sys histos :
+//     if(!m_fakesystematicsList.size()>0){
+//       w_fakeUpDnHistograms[0] = m_fakeHistogram;
+//       w_fakeUpDnHistograms[1] = m_fakeHistogram;
+//     }
+    if(m_dbg) cout << "fake_histo_up->Integral()= " << fake_histo_up->Integral() << endl;
     if(m_dbg) cout << "fake_histo_dn->Integral()= " << fake_histo_dn->Integral() << endl;
 
       

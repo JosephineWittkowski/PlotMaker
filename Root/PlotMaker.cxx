@@ -790,6 +790,9 @@ void PlotMaker::buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors*
     if(m_dbg) cout << "m_fakeHistogram->Integral(0,-1)= " << m_fakeHistogram->Integral(0,-1) << endl;
     TH1D* fake_histo_up = (TH1D*) m_fakeHistogram->Clone();
     TH1D* fake_histo_dn = (TH1D*)m_fakeHistogram->Clone();
+    //if no fake sys given, reset the fake sys histos :
+    fake_histo_up->Reset();
+    fake_histo_dn->Reset();
     if(m_dbg) cout << "fakes:" << endl;
     for(int bin=1; bin<m_fakeHistogram->GetNbinsX()+1; ++bin){
       cout << "bin " << bin-1 << endl;
@@ -818,7 +821,7 @@ void PlotMaker::buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors*
     }
     
     fake_histo_up->Add(m_fakeHistogram);
-    if(m_dbg) cout << "fake_histo_up->Integral()= " << fake_histo_up->Integral() << endl;
+    
     TH1D* _htmp = (TH1D*) m_fakeHistogram->Clone();
     _htmp->Add(fake_histo_dn,-1);
     fake_histo_dn->Reset();
@@ -826,6 +829,13 @@ void PlotMaker::buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors*
     _htmp->Delete();
     w_fakeUpDnHistograms[0] = fake_histo_up;
     w_fakeUpDnHistograms[1] = fake_histo_dn;
+    
+    //if no fake sys given, reset the fake sys histos :
+//     if(!m_fakesystematicsList.size()>0){
+//       w_fakeUpDnHistograms[0] = m_fakeHistogram;
+//       w_fakeUpDnHistograms[1] = m_fakeHistogram;
+//     }
+    if(m_dbg) cout << "fake_histo_up->Integral()= " << fake_histo_up->Integral() << endl;
     if(m_dbg) cout << "fake_histo_dn->Integral()= " << fake_histo_dn->Integral() << endl;
 
       
