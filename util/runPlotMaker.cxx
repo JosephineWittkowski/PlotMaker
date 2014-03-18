@@ -21,7 +21,7 @@ int main(int argc, char** argv)
   string fakesamples  = "Fakes"; vector<string> fakesampleList    ;
   string signal       = "130.0_0.0"			    ; vector<string> signalList;
   string binValues    = "1,0,300"                         ; vector<string> binValueList  ;
-  string MCsystematics  = "syst_XSUP";   vector<string> MCsystematicList;
+  string MCsystematics  = "MSUP";   vector<string> MCsystematicList;
   string fakesystematics = "";   vector<string> fakesystematicList;
   float dataBlindCut = 0.;
   
