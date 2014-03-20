@@ -15,22 +15,35 @@ int main(int argc, char** argv)
 {
   // Read user inputs
   string channels     = "none"                               ; vector<string> channelList   ;
-  string regions      = "SR_EM_1j"; vector<string> regionList    ;
+  string regions      = "SR_EE_1jNOmlj"; vector<string> regionList    ;
   string variables    = "mlj"                              ; vector<string> variableList  ;
-  string samples      = "Higgs,Top,WW,ZV,Zjets,Data"; vector<string> sampleList    ;
+  string samples      = "Data,WW,Higgs,ZV,Zjets,Top"; vector<string> sampleList    ;
   string fakesamples  = "Fakes"; vector<string> fakesampleList    ;
   string signal       = "130.0_0.0"			    ; vector<string> signalList;
-  string binValues    = "1,0,300"                         ; vector<string> binValueList  ;
-  string MCsystematics  = "MSUP";   vector<string> MCsystematicList;
-  string fakesystematics = "";   vector<string> fakesystematicList;
+  string binValues    = "15,0,450"                         ; vector<string> binValueList  ;
+  string MCsystematics  = "EESZUP,EESZDOWN,EESMATUP,EESMATDOWN,EESPSUP,EESPSDOWN,EESLOWUP,EESLOWDOWN,EERUP,EERDOWN,MSUP,MSDOWN,IDUP,IDDOWN,JESUP,JESDOWN,JER,SCALESTUP,SCALESTDOWN,RESOST,syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_ESFUP,syst_ESFDOWN,syst_MEFFUP,syst_MEFFDOWN,syst_BJETUP,syst_BJETDOWN,syst_CJETUP,syst_CJETDOWN,syst_BMISTAGUP,syst_BMISTAGDOWN,syst_BMISTAGDOWN,syst_XSUP,syst_XSDOWN"; vector<string> MCsystematicList;
+  
+  string fakesystematics = "ELREUP,ELREDOWN,MUREUP,MUREDOWN,ELFRUP,ELFRDOWN,MUFRUP,MUFRDOWN";   vector<string> fakesystematicList;
+  
   float dataBlindCut = 0.;
+  string largerSmaller = "";
+  largerSmaller = " >= "; dataBlindCut = 90000.; //mlj
+//     largerSmaller = " >= "; dataBlindCut = 120000.; // mljj
+  
+//     largerSmaller = " <= "; dataBlindCut = 200000.; // Ht
+//       largerSmaller = " <= "; dataBlindCut = 100000.; // mtmax
+//         largerSmaller = " <= "; dataBlindCut = 120000.; // mWWT = mtllmet
   
   bool   convertToGeV = true;
-  bool add_WZ_uncertainty = false;
-//   "IDDOWN,IDUP,MSDOWN,MSUP,EERDOWN,EERUP,EESLOWDOWN,EESLOWUP,EESMATDOWN,EESMATUP,EESPSDOWN,EESPSUP,EESZDOWN,EESZUP,JESDOWN,JESUP,RESOST,SCALESTDOWN,SCALESTUP,ELFRDOWN,ELFRUP,ELREDOWN,ELREUP,MUFRDOWN,MUFRUP,MUREDOWN,MUREUP,syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_BJETUP,syst_BJETDOWN,syst_XSUP,syst_XSDOWN"
+  bool add_WZ_uncertainty = true;
+//   "  EESZUP,EESZDOWN,EESMATUP,EESMATDOWN,EESPSUP,EESPSDOWN,EESLOWUP,EESLOWDOWN,EERUP,EERDOWN,MSUP,MSDOWN,IDUP,IDDOWN,JESUP,JESDOWN,JER,SCALESTUP,SCALESTDOWN,RESOST,syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_ESFUP,syst_ESFDOWN,syst_MEFFUP,syst_MEFFDOWN,syst_BJETUP,syst_BJETDOWN,syst_CJETUP,syst_CJETDOWN,syst_BMISTAGUP,syst_BMISTAGDOWN,syst_BMISTAGDOWN,syst_XSUP,syst_XSDOWN"
+  //Problematic, don't include:s
+  
 //   "SR_EE_1j,SR_EE_23j,SR_MM_1j,SR_MM_23j,SR_EM_1j,SR_EM_23j"
+  
 //   "Higgs,Top,WW,ZV,Zjets,Data"
-// syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_BJETUP,syst_BJETDOWN,syst_XSUP,syst_XSDOWN
+  
+// "ELREUP,ELREDOWN,MUREUP,MUREDOWN,ELFRUP,ELFRDOWN,MUFRUP,MUFRDOWN"
   
 //   
   
@@ -87,8 +100,8 @@ int main(int argc, char** argv)
 
   // Plot and Save
   PlotMaker* plots = new PlotMaker();
-  plots->setInputFile("/data/etp/jwittkowski/hft_processed_Mar_13/Processed/SSBG8TeV.root");
-  plots->setInputFileSignal("/data/etp/jwittkowski/hft_processed_Mar_13/Processed/SSWH8TeV.root");
+  plots->setInputFile("/data/etp/jwittkowski/hft_processed_Mar_18/Processed/SSBG8TeV.root");
+  plots->setInputFileSignal("/data/etp/jwittkowski/hft_processed_Mar_18/Processed/SSWH8TeV.root");
   plots->setSignalList     (signalList    );
   plots->setSampleList     (sampleList    );
   plots->SetFakeSampleList (fakesampleList);
@@ -98,6 +111,7 @@ int main(int argc, char** argv)
   plots->setGeVFlag        (convertToGeV  );
   plots->setWZFlag 	   (add_WZ_uncertainty);
   plots->setDataBlindCut   (dataBlindCut);
+  plots->setLargerSmaller(largerSmaller);
 
   // Loop over all combinations
   for(unsigned ii = 0; ii < channelList.size(); ++ii) {

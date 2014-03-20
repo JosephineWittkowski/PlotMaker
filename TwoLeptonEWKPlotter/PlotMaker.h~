@@ -63,7 +63,19 @@ class PlotMaker {
     
     /// \brief Set-Get Functions for WZ Flag
     void           setWZFlag(bool arg) { m_addWZuncert = arg;  };
-    bool           getWZFlag(        ) { return m_addWZuncert; };   
+    bool           getWZFlag(        ) { return m_addWZuncert; };
+    
+    /// \brief Set-Get Functions for WZ Flag
+    void           setDataBlindCut(float arg) { m_dataBlindCut = arg;  };
+    bool           getDataBlindCut(        ) { return m_dataBlindCut; };  
+    
+    /// \brief Set-Get Functions larger/smaller data blinding cut
+    void           setLargerSmaller(float arg) { m_largersmaller = arg;  };
+    string           getLargerSmaller(        ) { return m_largersmaller; };  
+    
+    
+    
+    
 
     /// \brief Main Function that plots and saves histograms
     void           generatePlot(TString channel,TString region,TString variable);
@@ -99,10 +111,13 @@ class PlotMaker {
     vector<string> m_binValuesList;
     bool           m_converToGeV;
     bool           m_addWZuncert;
+    float          m_dataBlindCut;
+    string m_largersmaller;
     TH1D* m_fakeHistogram;
     TH1D* m_ZVHistogram;
     bool m_dbg;
     bool m_eventyield;
+    double m_WZSysUncert;
 };
 
 #endif 

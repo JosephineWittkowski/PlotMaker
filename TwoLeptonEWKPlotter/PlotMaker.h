@@ -69,6 +69,12 @@ class PlotMaker {
     void           setDataBlindCut(float arg) { m_dataBlindCut = arg;  };
     bool           getDataBlindCut(        ) { return m_dataBlindCut; };  
     
+    /// \brief Set-Get Functions larger/smaller data blinding cut
+    void           setLargerSmaller(string arg) { m_largersmaller = arg;  };
+    string           getLargerSmaller(        ) { return m_largersmaller; };  
+    
+    
+    
     
 
     /// \brief Main Function that plots and saves histograms
@@ -106,10 +112,12 @@ class PlotMaker {
     bool           m_converToGeV;
     bool           m_addWZuncert;
     float          m_dataBlindCut;
+    string m_largersmaller;
     TH1D* m_fakeHistogram;
     TH1D* m_ZVHistogram;
     bool m_dbg;
     bool m_eventyield;
+    double m_WZSysUncert;
 };
 
 #endif 
