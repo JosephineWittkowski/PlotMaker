@@ -481,7 +481,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   histograms[dataIndex]->GetXaxis()->SetLabelSize(0.03);
   histograms[dataIndex]->GetYaxis()->SetTitle(ylabel); 
 //   histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,1000*pow(10,ceil(log(histograms[dataIndex]->GetMaximum())/log(10))));
-    histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,histograms[dataIndex]->GetMaximum()*3.5);
+    histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,histograms[dataIndex]->GetMaximum()*5);
 
   gPad->RedrawAxis();
 //   gPad->SetLogy(1);
@@ -558,8 +558,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   
 
 
-  TString plotName = "kinematics_" + region + "_" + variable + ".pdf" ;
-  TString plotNameeps = "kinematics_" + region + "_" + variable + ".eps" ;
+  TString plotName = "kinematics_" + region + "_" + variable + "test.pdf" ;
+  TString plotNameeps = "kinematics_" + region + "_" + variable + "test.eps" ;
   //plotName = dirOut + "/" + plotName;
   canvas->SaveAs(plotName);
   canvas->SaveAs(plotNameeps);

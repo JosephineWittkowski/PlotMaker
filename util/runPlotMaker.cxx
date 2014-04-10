@@ -15,8 +15,8 @@ int main(int argc, char** argv)
 {
   // Read user inputs
   string channels     = "none"                               ; vector<string> channelList   ;
-  string regions      = "SR_EE_1jNOmlj"; vector<string> regionList    ;
-  string variables    = "mlj"                              ; vector<string> variableList  ;
+  string regions      = "SR_MM_23jNOmljjNOHt"; vector<string> regionList    ;
+  string variables    = "Ht"                              ; vector<string> variableList  ;
   string samples      = "Data,WW,Higgs,ZV,Zjets,Top"; vector<string> sampleList    ;
   string fakesamples  = "Fakes"; vector<string> fakesampleList    ;
   string signal       = "130.0_0.0"			    ; vector<string> signalList;
@@ -27,10 +27,10 @@ int main(int argc, char** argv)
   
   float dataBlindCut = 0.;
   string largerSmaller = "";
-  largerSmaller = " >= "; dataBlindCut = 90000.; //mlj
+//   largerSmaller = " >= "; dataBlindCut = 90000.; //mlj
 //     largerSmaller = " >= "; dataBlindCut = 120000.; // mljj
   
-//     largerSmaller = " <= "; dataBlindCut = 200000.; // Ht
+    largerSmaller = " <= "; dataBlindCut = 200000.; // Ht
 //       largerSmaller = " <= "; dataBlindCut = 100000.; // mtmax
 //         largerSmaller = " <= "; dataBlindCut = 120000.; // mWWT = mtllmet
   
@@ -100,8 +100,8 @@ int main(int argc, char** argv)
 
   // Plot and Save
   PlotMaker* plots = new PlotMaker();
-  plots->setInputFile("/data/etp/jwittkowski/hft_processed_Mar_18/Processed/SSBG8TeV.root");
-  plots->setInputFileSignal("/data/etp/jwittkowski/hft_processed_Mar_18/Processed/SSWH8TeV.root");
+  plots->setInputFile("/data/etp/jwittkowski/hft_processed_Mar_26/Processed/SSBG8TeV.root");
+  plots->setInputFileSignal("/data/etp/jwittkowski/hft_processed_Mar_26/Processed/SSWH8TeV.root");
   plots->setSignalList     (signalList    );
   plots->setSampleList     (sampleList    );
   plots->SetFakeSampleList (fakesampleList);

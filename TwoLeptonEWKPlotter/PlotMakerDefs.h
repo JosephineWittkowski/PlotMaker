@@ -23,6 +23,8 @@ TS2TSMap RegionCuts = boost::assign::map_list_of
 
 ("SR_EE_1jNOmljNOHt"    , "*((!isOS || L2qFlipWeight!=1.0) && isEE   && L2nCentralLightJets==1 && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) & L2METrel>55000.)")
 
+("SR_EE_1jNOmljHt"    , "*((!isOS || L2qFlipWeight!=1.0) && isEE   && L2nCentralLightJets==1 && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) & L2METrel>55000. && Ht<=200000. )")
+
 ("SR_EE_23j"    , "*((!isOS || L2qFlipWeight!=1.0) && isEE   && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) && L2METrel>30000. && mljj<120000. && mtmax>100000.)")
 
 ("SR_EE_23jmljj"    , "*((!isOS || L2qFlipWeight!=1.0) && isEE   && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) && L2METrel>30000. && mljj>=120000. && mtmax>100000.)")
