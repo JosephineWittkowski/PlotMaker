@@ -481,7 +481,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   histograms[dataIndex]->GetXaxis()->SetLabelSize(0.03);
   histograms[dataIndex]->GetYaxis()->SetTitle(ylabel); 
 //   histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,1000*pow(10,ceil(log(histograms[dataIndex]->GetMaximum())/log(10))));
-    histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,histograms[dataIndex]->GetMaximum()*4);
+    histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,histograms[dataIndex]->GetMaximum()*3);
 
   gPad->RedrawAxis();
 //   gPad->SetLogy(1);
