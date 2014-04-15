@@ -58,7 +58,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   TString finalDataBlindCut = "";
   if(m_dataBlindCut>0.) finalDataBlindCut = DataBlindCut;
 
-  if(region.Contains("23j")) m_WZSysUncert = 0.43;
+  if(region.Contains("23j")) m_WZSysUncert = 0.368;
   else if(region.Contains("1j")) m_WZSysUncert = 0.174;
   else{ 
     cerr << "ERROR: Neither '23j' nor '1j' in 'region' -> don't know which WZSysUncert to use" << endl;    
@@ -481,7 +481,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   histograms[dataIndex]->GetXaxis()->SetLabelSize(0.03);
   histograms[dataIndex]->GetYaxis()->SetTitle(ylabel); 
 //   histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,1000*pow(10,ceil(log(histograms[dataIndex]->GetMaximum())/log(10))));
-    histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,histograms[dataIndex]->GetMaximum()*3);
+    histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,histograms[dataIndex]->GetMaximum()*3.5);
 
   gPad->RedrawAxis();
 //   gPad->SetLogy(1);
@@ -558,8 +558,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   
 
 
-  TString plotName = "kinematics_" + region + "_" + variable + "_Apr09.pdf" ;
-  TString plotNameeps = "kinematics_" + region + "_" + variable + "_Apr09.eps" ;
+  TString plotName = "kinematics_" + region + "_" + variable + "_Mar26.pdf" ;
+  TString plotNameeps = "kinematics_" + region + "_" + variable + "_Mar26.eps" ;
   //plotName = dirOut + "/" + plotName;
   canvas->SaveAs(plotName);
   canvas->SaveAs(plotNameeps);
