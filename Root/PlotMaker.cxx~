@@ -44,6 +44,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   
   m_dbg = false;
   m_eventyield = true;
+  m_table = false;
   
   string DataBlindCut;
   string AnD = " && ";
@@ -60,10 +61,18 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 
   if(region.Contains("23j")) m_WZSysUncert = 0.368;
   else if(region.Contains("1j")) m_WZSysUncert = 0.174;
-  else{ 
+  if(!(region.Contains("EE_") || region.Contains("MM_") || region.Contains("EM_"))){ 
     cerr << "ERROR: Neither '23j' nor '1j' in 'region' -> don't know which WZSysUncert to use" << endl;    
     return;
   }
+  TString cutflowstage = "\\mlj{} / \\mljj{}";
+  if(region.Contains("_mtmax")) cutflowstage = "\\mtmax{}";
+  if(region.Contains("_Ht")) cutflowstage = "\\meff{}";
+  if(region.Contains("_METrel")) cutflowstage = "\\metrel{}";
+  if(region.Contains("_letpPt")) cutflowstage = "\\ptlead{} / \\ptsubl{}";
+  if(region.Contains("_ZVeto")) cutflowstage = "$Z$ veto";
+  if(region.Contains("_Njets")) cutflowstage = "1-3 central jets";
+  
 
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -162,6 +171,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   legend->SetTextSize(0.027);
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
+  std::cout.precision(2);
+  cout << fixed;
   // Get signal histogram(s)
   TH1D    *histograms_signal[m_signalList.size()];
   getHistograms(m_signalROOTFile, observable, cut, finalDataBlindCut, histograms_signal,"CENTRAL", m_signalList);
@@ -196,16 +207,33 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   THStack *stackMCBg        = new THStack("stackMCBg","MC Standard Model");
   int      dataIndex      = -1; 
   int 	   ZVIndex	  = -1;
+  int 	   SSIndex	  = -1;
   
-
+  
+  if(m_table) cout << "Contribution & ";
+  for(unsigned int i=0; i<m_sampleList.size(); ++i) {
+      if(m_table && (m_sampleList.at(i)!="Data")) cout << m_sampleList.at(i) << " & " ;
+  }
+  double error_on_integral = 0.;
+  if(m_table) cout << " Fake & ($m_{\\neutralino{2}}, m_{\\chargino{1}, \\neutralino{1}}$) \\\\" << endl;
+  if(m_table) cout << "& & & & & & & =(130,0)~GeV \\\\" << endl;
+  if(m_table) cout << "\\hline " << endl;
+  if(m_table) cout << cutflowstage << " & " ;
   for(unsigned int i=0; i<m_sampleList.size(); ++i) {
     // Add to stack if background
-    if((m_dbg || m_eventyield) && (m_sampleList.at(i)!="Data" || m_dataBlindCut>0.)) cout << m_sampleList.at(i) << " : " << histograms[i]->Integral(0, -1) << " \\\\" << endl;
+    if((m_dbg || m_eventyield) && (m_sampleList.at(i)!="Data" || (m_dataBlindCut>-1. && m_show_data))) cout << m_sampleList.at(i) << " : " << histograms[i]->Integral(0, -1) << " \\\\" << endl;
+    if(m_table && (m_sampleList.at(i)!="Data")) histograms[i]->IntegralAndError(0, -1, error_on_integral);
+    if(m_table && (m_sampleList.at(i)!="Data")) cout << histograms[i]->IntegralAndError(0, -1, error_on_integral) << " $\\pm$ " << error_on_integral;;
+    if(m_table && i < m_sampleList.size()-2  && (m_sampleList.at(i)!="Data")) cout << " & ";
     
     if(m_sampleList.at(i)!="Data"){
       if(m_sampleList.at(i)=="ZV"){
 	ZVIndex = i;
 	m_ZVHistogram =  (TH1D*) histograms[i]->Clone();
+      }
+      if(m_sampleList.at(i)=="SameSign"){
+	SSIndex = i;
+	m_SSHistogram =  (TH1D*) histograms[i]->Clone();
       }
       stackBg->Add(histograms[i]);
       if(m_sampleList.at(i)!="Fakes") stackMCBg->Add(histograms[i]);
@@ -229,9 +257,18 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
       Data->SetLineWidth(2);
     }
   }
+  if(m_show_data) legend->AddEntry(Data,SampleNames["Data"],"p");
   for(unsigned int i=0; i<m_fakesampleList.size(); ++i) {
     stackBg->Add(fakehistograms[i]);
     if(m_dbg || m_eventyield) cout << m_fakesampleList.at(i) << " : " << fakehistograms[i]->Integral(0, -1) << " \\\\" << endl;
+    if(m_table) fakehistograms[i]->IntegralAndError(0, -1, error_on_integral);
+    if(m_table) cout << " & " << fakehistograms[i]->IntegralAndError(0, -1, error_on_integral) << " $\\pm$ " << error_on_integral;
+    legend->AddEntry(fakehistograms[i],SampleNames["Fakes"],"f");
+  }
+  
+  for(unsigned int i=0; i<m_signalList.size(); ++i) {
+    if(m_table) histograms_signal[i]->IntegralAndError(0, -1, error_on_integral);
+    if(m_table) cout << " & " <<  histograms_signal[i]->IntegralAndError(0, -1, error_on_integral) << " $\\pm$ " << error_on_integral << " \\\\" << endl;  
   }
 //   if(m_eventyield) cout << "Total bg = " << ((TH1*)(stackBg->GetStack()->Last()))->Integral() << endl;
   
@@ -242,7 +279,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 
 
   // Add Data to legend
-  legend->AddEntry(Data,SampleNames["Data"],"p");
+  
 
   // Add SM Background to legend
   for(int i=m_sampleList.size()-1; i>-1 ; --i) {
@@ -409,6 +446,20 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 	if(m_dbg) cout << "ey_low set from " << ey_low << " to " << sqrt(pow(ey_low, 2) + pow( m_WZSysUncert*m_ZVHistogram->GetBinContent(bin+1),2)) << endl;
       }
     }
+    else if(m_addWZuncert && SSIndex > -1){
+      if(m_dbg) cout << "###########    add WZ uncertainty   ##########: " << endl;
+      
+      //careful: bin TGraphAsymmErrors (start at 0) not same as for TH1D (start at 1)! 
+      for(int bin=0; bin<nominalAsymErrorsMCBg->GetN(); bin++){
+	double ey_low = nominalAsymErrorsMCBg->GetEYlow()[bin];
+	double ey_high = nominalAsymErrorsMCBg->GetEYhigh()[bin];
+	if(m_dbg) cout << "m_WZSysUncert= " << m_WZSysUncert << endl;
+	nominalAsymErrorsMCBg->GetEYhigh()[bin] = sqrt(pow(ey_high, 2) + pow( m_WZSysUncert*m_SSHistogram->GetBinContent(bin+1),2));
+	if(m_dbg) cout << "yhigh set from " << ey_high << " to " << sqrt(pow(ey_high, 2) + pow( m_WZSysUncert*m_SSHistogram->GetBinContent(bin+1),2)) << endl;
+	nominalAsymErrorsMCBg->GetEYlow()[bin]  = sqrt(pow(ey_low, 2) + pow( m_WZSysUncert*m_SSHistogram->GetBinContent(bin+1),2)); 
+	if(m_dbg) cout << "ey_low set from " << ey_low << " to " << sqrt(pow(ey_low, 2) + pow( m_WZSysUncert*m_SSHistogram->GetBinContent(bin+1),2)) << endl;
+      }      
+    }
     
     if(m_dbg) cout << "nominalAsymErrorsMCBg->GetY()[0]= " << nominalAsymErrorsMCBg->GetY()[0] << endl;
 
@@ -423,19 +474,31 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 
   // Top Pad
   topPad               ->cd();
-  topPad               ->SetBottomMargin(0.15);
-  histograms[dataIndex]->Draw("p");
-  if(m_eventyield) cout << "Data= " << histograms[dataIndex]->Integral(0,-1)  << endl;
-  if(m_eventyield) cout << "data content= " << histograms[dataIndex]->Integral() << endl;
-  stackBg              ->Draw("hists same");
-  nominalAsymErrorsMCBg    ->Draw("same && E2");
-//   Data                 ->Draw("same && p");
-  histograms_signal[0]->Draw("hists same");
-  legend               ->Draw();
-  
+  if(m_show_data) topPad               ->SetBottomMargin(0.13);
+  else topPad               ->SetBottomMargin(0.13);
 
-  TArrow* arrow = new TArrow(m_dataBlindCut/1000.,0,m_dataBlindCut/1000.,histograms[dataIndex]->GetMaximum()/1.5,0.03,"<|");
-  arrow->SetLineWidth(5);
+  if(m_show_data){
+    histograms[dataIndex]->Draw("p");
+
+    stackBg              ->Draw("hists same");
+    nominalAsymErrorsMCBg    ->Draw("same && E2");
+    Data                 ->Draw("same && p");
+    histograms_signal[0]->Draw("hists same");
+    legend               ->Draw();
+  }
+  else{
+    histograms_signal[0]->Draw("hists");
+    stackBg              ->Draw("hists same");
+    nominalAsymErrorsMCBg    ->Draw("same E2");
+    histograms_signal[0]->Draw("hists");
+    
+    legend               ->Draw();
+  }
+  
+  TArrow* arrow;
+  if(!variable.Contains("Eta")) arrow = new TArrow(m_dataBlindCut/1000.,0,m_dataBlindCut/1000.,histograms[dataIndex]->GetMaximum()/1.5,0.03,"<|");
+  else arrow = new TArrow(m_dataBlindCut,0,m_dataBlindCut,histograms[dataIndex]->GetMaximum()/1.5,0.03,"<|");
+  arrow->SetLineWidth(6);
   arrow->SetAngle(40);
   arrow->SetLineColor(kRed);
   arrow->SetFillColor(kRed);
@@ -458,7 +521,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   else if( variable.EqualTo("mljj") ) {
     xlabel = "m_{ljj} [GeV]";
   }
-  else if( variable.EqualTo("metRel") ) {
+  else if( variable.EqualTo("L2METrel") ) {
     xlabel = "E_{T}^{miss,rel} [GeV]";
   }
   else if( variable.EqualTo("mtmax") ) {
@@ -481,10 +544,10 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   histograms[dataIndex]->GetXaxis()->SetLabelSize(0.03);
   histograms[dataIndex]->GetYaxis()->SetTitle(ylabel); 
 //   histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,1000*pow(10,ceil(log(histograms[dataIndex]->GetMaximum())/log(10))));
-    histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,histograms[dataIndex]->GetMaximum()*3.5);
-//     histograms[dataIndex]->GetXaxis()->SetRangeUser(100, 120);
+  if(m_show_data) histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,histograms[dataIndex]->GetMaximum()*3.5);
+  else histograms_signal[0]->GetYaxis()->SetRangeUser(2.e-2,stackMCBg->GetMaximum()*3.5);
 
-//   gPad->RedrawAxis();
+  if(m_show_data) gPad->RedrawAxis();
 //   gPad->SetLogy(1);
 
   // Decoration
@@ -534,7 +597,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   double x1=0; double y1=0; unsigned int newIndex = 0.;
   for(int kk=0; kk<ratio_raw->GetN(); ++kk){
     ratio_raw->GetPoint(kk, x1,y1);
-    if(x1 > 0. && y1 > 0.) {
+//     cout << " ratio_raw->GetPoint x1= " << x1 << " y1= " << y1 << endl;
+    if(/*x1 > 0. &&*/ y1 > 0.) {
       ratio->SetPoint(newIndex, x1, y1);
       ratio->SetPointError(newIndex, ratio_raw->GetErrorXlow(kk), ratio_raw->GetErrorXhigh(kk), ratio_raw->GetErrorYlow(kk), ratio_raw->GetErrorYhigh(kk));
       newIndex++;
@@ -554,13 +618,13 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   ratio_original->Draw();
   ratioBand     ->Draw("same && E2");
   line          ->Draw();
-  ratio         ->Draw("same && P");
+  if(m_show_data) ratio         ->Draw("same && P");
   gPad          ->SetGridy(1);
   
 
 
-  TString plotName = "kinematics_" + region + "_" + variable + "_Mar26.pdf" ;
-  TString plotNameeps = "kinematics_" + region + "_" + variable + "_Mar26.eps" ;
+  TString plotName = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_May_19.pdf" ;
+  TString plotNameeps = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_May_19.eps" ;
   //plotName = dirOut + "/" + plotName;
   canvas->SaveAs(plotName);
   canvas->SaveAs(plotNameeps);
@@ -772,13 +836,16 @@ void PlotMaker::buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors*
 {
   
   output->SetMarkerSize(0);
+  float EYHigh = 0.;
+  float EYLow = 0.;
   for(int bin=0; bin < output->GetN(); bin++){ 
     if(m_dbg) cout << "bin " << bin << endl;
     output->GetY()[bin] = 1.; 
     
     if( fabs(input->GetY()[bin]) > 0.0001 ) {
       output->GetEYhigh()[bin]=input->GetEYhigh()[bin] /input->GetY()[bin]; 
-      if(m_dbg || m_eventyield) cout << "$^{+ " << input->GetEYhigh()[bin] /*<< " / " << input->GetY()[bin]*/ << "} "; 
+//       if(m_dbg || m_eventyield) cout << "$^{+ " << input->GetEYhigh()[bin]  << "} "; 
+      EYHigh += input->GetEYhigh()[bin];
     }
    else 
       output->GetEYhigh()[bin]= 0.; 
@@ -786,16 +853,14 @@ void PlotMaker::buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors*
    if( fabs(input->GetY()[bin]) > 0.0001 ){
 
       output->GetEYlow()[bin]=input->GetEYlow()[bin]/input->GetY()[bin]; 
-      if(m_dbg || m_eventyield) cout << "_{- " << input->GetEYlow()[bin] /*<< " / " << input->GetY()[bin]*/ << "}$ \\\\" << endl;     
+//       if(m_dbg || m_eventyield) cout << "_{- " << input->GetEYlow()[bin]  << "}$ \\\\" << endl;     
+      EYLow += input->GetEYlow()[bin];
       
    }
    else 
       output->GetEYlow()[bin]= 0.; 
-//    if( output->GetEYlow()[bin] > 1. ) 
-//      output->GetEYlow()[bin] = 1.; 
-//    if( output->GetEYhigh()[bin] > 1. ) 
-//      output->GetEYhigh()[bin] = 1.; 
   }
+  if(m_dbg || m_eventyield) cout << "$^{+ " << EYHigh  << "} _{- " << EYLow << "}$ \\\\" << endl;   
 }
 
   void PlotMaker::GetFakeSys(vector<TH1D*> &w_fakeUpDnHistograms, TString w_observable, TString w_cut, TString w_dataBlindCut){

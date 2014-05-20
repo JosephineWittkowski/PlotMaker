@@ -73,6 +73,10 @@ class PlotMaker {
     void           setLargerSmaller(string arg) { m_largersmaller = arg;  };
     string           getLargerSmaller(        ) { return m_largersmaller; };  
     
+    /// \brief Set-Get Functions larger/smaller data blinding cut
+    void           setShowData(bool arg) { m_show_data = arg;  };
+    bool           getShowData(        ) { return m_show_data; };      
+    
     
     
     
@@ -115,9 +119,12 @@ class PlotMaker {
     string m_largersmaller;
     TH1D* m_fakeHistogram;
     TH1D* m_ZVHistogram;
+    TH1D* m_SSHistogram;
     bool m_dbg;
     bool m_eventyield;
     double m_WZSysUncert;
+    double m_table;
+    bool m_show_data;
 };
 
 #endif 
