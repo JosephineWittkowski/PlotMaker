@@ -42,7 +42,7 @@ PlotMaker::~PlotMaker()
 void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 {
   
-  m_dbg = false;
+  m_dbg = true;
   m_eventyield = true;
   m_table = false;
   
@@ -61,15 +61,16 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 
   if(region.Contains("23j")) m_WZSysUncert = 0.368;
   else if(region.Contains("1j")) m_WZSysUncert = 0.174;
-  if(!(region.Contains("EE_") || region.Contains("MM_") || region.Contains("EM_"))){ 
+  if(!(region.Contains("EE_") || region.Contains("MM_") || region.Contains("EM_")) && m_addWZuncert){ 
     cerr << "ERROR: Neither '23j' nor '1j' in 'region' -> don't know which WZSysUncert to use" << endl;    
     return;
   }
-  TString cutflowstage = "\\mlj{} / \\mljj{}";
+  TString cutflowstage = "\\mlj{} , \\mljj{}";
   if(region.Contains("_mtmax")) cutflowstage = "\\mtmax{}";
   if(region.Contains("_Ht")) cutflowstage = "\\meff{}";
   if(region.Contains("_METrel")) cutflowstage = "\\metrel{}";
-  if(region.Contains("_letpPt")) cutflowstage = "\\ptlead{} / \\ptsubl{}";
+  if(region.Contains("_leptPt")) cutflowstage = "\\ptlead{} , \\ptsubl{}";
+  if(region.Contains("_deltaEtaLl")) cutflowstage = "\\dEtall{}";
   if(region.Contains("_ZVeto")) cutflowstage = "$Z$ veto";
   if(region.Contains("_Njets")) cutflowstage = "1-3 central jets";
   
@@ -89,6 +90,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   cout << endl;
 
   cout << "PlotMaker::INFO   Included systematics : ";
+
+  m_MCsystematicsList.insert(m_MCsystematicsList.end(), m_MCsystematicsCorrBgList.begin(), m_MCsystematicsCorrBgList.end());
   for(unsigned int i=0; i<m_MCsystematicsList.size(); ++i) {                          
     cout << m_MCsystematicsList.at(i) << " ";
   }
@@ -171,7 +174,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   legend->SetTextSize(0.027);
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
-  std::cout.precision(2);
+  std::cout.precision(8);
   cout << fixed;
   // Get signal histogram(s)
   TH1D    *histograms_signal[m_signalList.size()];
@@ -210,13 +213,12 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   int 	   SSIndex	  = -1;
   
   
-  if(m_table) cout << "Contribution & ";
+  if(m_table) cout << "Requirement on & ";
   for(unsigned int i=0; i<m_sampleList.size(); ++i) {
       if(m_table && (m_sampleList.at(i)!="Data")) cout << m_sampleList.at(i) << " & " ;
   }
   double error_on_integral = 0.;
-  if(m_table) cout << " Fake & ($m_{\\neutralino{2}}, m_{\\chargino{1}, \\neutralino{1}}$) \\\\" << endl;
-  if(m_table) cout << "& & & & & & & =(130,0)~GeV \\\\" << endl;
+  if(m_table) cout << " Fake & ($m_{\\neutralino{2}}, m_{\\chargino{1}, \\neutralino{1}}$)=(130,0)~GeV \\\\" << endl;
   if(m_table) cout << "\\hline " << endl;
   if(m_table) cout << cutflowstage << " & " ;
   for(unsigned int i=0; i<m_sampleList.size(); ++i) {
@@ -294,11 +296,11 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   // Treatment of systematic errors. 
   // uncorrelated: add squared. correlated: add linarly.
   // 1) loop over all sys errors and weighted event yields for MC bg, add to totalSysHistoBg (linear, stack, ==> correlated!)
-  // 2) add for each individual sys the difference to the nominal value to yhigh or ylow with myAddtoBand. Original TGraphAsymmErrors 'nominalAsymErrorsMCBg': deduced from MC stack histo -> includes statistical error of all MC histos.
+  // 2) add for each individual sys the difference to the nominal value to yhigh or ylow with myAddtoBandSquaredUncorr. Original TGraphAsymmErrors 'nominalAsymErrorsMCBg': deduced from MC stack histo -> includes statistical error of all MC histos.
   // 3) to include stat error of fake histos, use myTGraphErrorsAdd() method to add fake_histo (= stat errors) to 'nominalAsymErrorsMCBg'.
   // 4) for fakes, don't consider stat error any more (already included!). Loop over each bin for all fake sys and add difference to nominal event yield to yhigh or ylow. 
   // 4) for fakes, don't consider stat error any more (already included!). Loop over each bin for all fake sys and add difference to nominal event yield to yhigh or ylow (in GetFakeSys() method)
-  // 5) use again myAddtoBand method. 'nominalAsymErrorsMCBg' now inlcudes all background (MC + fake !) -> add other bg contributions to fake_up and fake_dn histos before calling the method.
+  // 5) use again myAddtoBandSquaredUncorr method. 'nominalAsymErrorsMCBg' now inlcudes all background (MC + fake !) -> add other bg contributions to fake_up and fake_dn histos before calling the method.
   // 6) final error includes stats of MC bg, stats of fake bg, sys of MC bg and sys of fake bg. Everything is added squared (uncorrelated) except for individual MC bg components or simply adding EE, EM and MM if wanted. ('regions and processes' are correlated. Everything else is uncorrelated. )
 
   // Get Total MC Histo
@@ -358,10 +360,10 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 
     // Loop over samples and add to total systematics histo
     for(unsigned int j=0; j < m_sampleList.size(); ++j) {      
-      
+//       cout << m_sampleList.at(j) << " nominal " << histograms[j]->Integral(0, -1) << endl;
       if(m_sampleList.at(j) != "Fakes"){
 	if(sysHistograms[j]!=NULL){
-	  if(m_dbg) cout << m_sampleList.at(j) << " " << m_MCsystematicsList.at(i) << " Integral " << sysHistograms[j]->Integral(0,-1) << endl;
+	  if(m_dbg) cout << m_sampleList.at(j) << " " << m_MCsystematicsList.at(i) << " Integral " << sysHistograms[j]->Integral(0,-1) << " diff " << fabs(sysHistograms[j]->Integral(0,-1) - histograms[j]->Integral(0, -1)) << endl;
 	  totalSysHistoBg->Add(sysHistograms[j]);
 	}
 	else if ( m_sampleList.at(j) != "Data") {
@@ -371,12 +373,17 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
       }
     }
 
-    //2) add for each individual sys the difference to the nominal value to yhigh or ylow with myAddtoBand. Original TGraphAsymmErrors 'nominalAsymErrorsMCBg': deduced from stack histo -> includes statistical error of all MC histos.
+    //2) add for each individual sys the difference to the nominal value to yhigh or ylow with myAddtoBandSquaredUncorr. Original TGraphAsymmErrors 'nominalAsymErrorsMCBg': deduced from stack histo -> includes statistical error of all MC histos.
     
-    //All MC BG (correlated-> use TH1D, linear) SYS (uncorrelated -> use myAddtoBand(), squared)
+    //All MC BG (correlated-> use TH1D, linear) SYS (uncorrelated -> use myAddtoBandSquaredUncorr(), squared)
 
       transientMcBg = TH1TOTGraph(totalSysHistoBg);
-      myAddtoBand(transientMcBg,nominalAsymErrorsMCBg);
+      if(m_MCsystematicsList.at(i) == "syst_XSUP" || m_MCsystematicsList.at(i) == "syst_XSDOWN"|| m_MCsystematicsList.at(i) == "syst_GENUP" || m_MCsystematicsList.at(i) == "syst_GENDOWN"){
+// 	if(m_dbg) cout << "add linearly" << endl;
+	myAddtoBandLinCorr(transientMcBg,nominalAsymErrorsMCBg);
+      }
+      //add the errors squared to nominalAsymErrorsMCBg:
+      else myAddtoBandSquaredUncorr(transientMcBg,nominalAsymErrorsMCBg);
       totalSysHistoBg->Reset();
 
   }
@@ -386,8 +393,9 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   // 3) to include stat error of fake histos, use myTGraphErrorsAdd() method to add fake_histo (= stat errors) to 'nominalAsymErrorsMCBg'.
     if(m_fakesampleList.size() > 0/* && m_fakesystematicsList.size()>0*/){
       TGraphAsymmErrors* nominalAsymmErrorsFake = TH1TOTGraph(m_fakeHistogram);
+      //   add linearly the yield of g2 to g1; add the errors squared:
       myTGraphErrorsAdd(nominalAsymErrorsMCBg,nominalAsymmErrorsFake );
-      if(m_dbg) cout << "nominalAsymErrorsMCBg->GetY()[0]= " << nominalAsymErrorsMCBg->GetY()[0] << endl;
+      if(m_dbg) cout << "after adding fake stat error: nominalAsymErrorsMCBg->GetY()[0]= " << nominalAsymErrorsMCBg->GetY()[0] << endl;
       vector<TH1D*> FakeUpDnHistograms;
       TH1D* sys0 = (TH1D*) m_fakeHistogram->Clone();
       TH1D* sys1 = (TH1D*) m_fakeHistogram->Clone();
@@ -419,9 +427,9 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 	if(m_dbg) cout << "totalSysHistoBg->Integral(0,-1)= " << totalSysHistoBg->Integral(0,-1) << endl;
 
 	totalSysHistoBg->Add(FakeUpDnHistograms[i]); //Add the fake sys
-	// 5) use again myAddtoBand method. 'nominalAsymErrorsMCBg' now inlcudes all background (MC + fake !) -> add other bg contributions to fake_up and fake_dn histos before calling the method.
+	// 5) use again myAddtoBandSquaredUncorr method. 'nominalAsymErrorsMCBg' now inlcudes all background (MC + fake !) -> add other bg contributions to fake_up and fake_dn histos before calling the method.
 	TGraphAsymmErrors* transientFake = TH1TOTGraph(totalSysHistoBg);   //Mem leak!!!
-	myAddtoBand(transientFake,nominalAsymErrorsMCBg); //100 uncorrelated sys - add in quad to the other MC bkg sys
+	myAddtoBandSquaredUncorr(transientFake,nominalAsymErrorsMCBg); //100 uncorrelated sys - add in quad to the other MC bkg sys
 	totalSysHistoBg->Reset();
       }
     }
@@ -490,7 +498,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     histograms_signal[0]->Draw("hists");
     stackBg              ->Draw("hists same");
     nominalAsymErrorsMCBg    ->Draw("same E2");
-    histograms_signal[0]->Draw("hists");
+    histograms_signal[0]->Draw("hists same");
     
     legend               ->Draw();
   }
@@ -547,7 +555,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   if(m_show_data) histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,histograms[dataIndex]->GetMaximum()*3.5);
   else histograms_signal[0]->GetYaxis()->SetRangeUser(2.e-2,stackMCBg->GetMaximum()*3.5);
 
-  if(m_show_data) gPad->RedrawAxis();
+//   if(m_show_data) gPad->RedrawAxis();
 //   gPad->SetLogy(1);
 
   // Decoration
@@ -623,11 +631,11 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   
 
 
-  TString plotName = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_May_19.pdf" ;
-  TString plotNameeps = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_May_19.eps" ;
+  TString plotName = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_May_20.pdf" ;
+  TString plotNameeps = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_May_20.eps" ;
   //plotName = dirOut + "/" + plotName;
-  canvas->SaveAs(plotName);
-  canvas->SaveAs(plotNameeps);
+//   canvas->SaveAs(plotName);
+//   canvas->SaveAs(plotNameeps);
 
   // Delete unnecessary stuff to open up memory
   //delete[] histograms;
@@ -787,7 +795,7 @@ void PlotMaker::getHistograms(TFile* input, TString varToPlot, TString cutToAppl
     TString additionalWeight = "1";
     if(variation.Contains("syst")) additionalWeight= variation;
 //     else weight = variation;
-    if(m_dbg) cout << "weight= " << weight << endl;
+//     if(m_dbg) cout << "weight= " << weight << endl;
     //eventually additional cut for data to blind it in SR.
 //     cout << "additionalWeight + weight + cutToApply + dataBlindCut= " << additionalWeight + weight + cutToApply + dataBlindCut << endl;
     if(inputList.at(i) == "Data"){

@@ -119,6 +119,7 @@ class PlotMaker {
     string m_largersmaller;
     TH1D* m_fakeHistogram;
     TH1D* m_ZVHistogram;
+    TH1D* m_SSHistogram;
     bool m_dbg;
     bool m_eventyield;
     double m_WZSysUncert;

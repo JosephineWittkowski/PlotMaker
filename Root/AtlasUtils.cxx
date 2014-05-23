@@ -153,6 +153,7 @@ TGraphAsymmErrors* myTGraphErrorsDivide(TGraphAsymmErrors* g1,TGraphAsymmErrors*
 
 
 void myTGraphErrorsAdd(TGraphAsymmErrors* g1, TGraphAsymmErrors* g2){
+//   add linearly the yield of g2 to g1; add the errors squared
   bool m_dbg = false;
 
   if( g1->GetN() != g2->GetN() ){
@@ -225,12 +226,11 @@ TGraphAsymmErrors* myMakeBand(TGraphAsymmErrors* g0,
 
 }
 
-void myAddtoBand(TGraphAsymmErrors* g1, TGraphAsymmErrors* g2) {
-  bool m_dbg = false;
+void myAddtoBandSquaredUncorr(TGraphAsymmErrors* g1, TGraphAsymmErrors* g2) {
+  //add the errors squared to g2:
+  bool m_dbg = true;
 
   Double_t  x1=0., y1=0.,  y2=0., y0=0;
-  //Double_t dx1=0.;
-  //Double_t dum;
 
   if (g1->GetN()!=g2->GetN())
     std::cout << " graphs have not the same # of elements " << std::endl;
@@ -245,33 +245,72 @@ void myAddtoBand(TGraphAsymmErrors* g1, TGraphAsymmErrors* g2) {
     if (y1==0) y1=1;
     if (y2==0) y2=1;
 
-    //    if (i==g1->GetN()-1) x2=x1;
-    //    else                 g2->GetPoint(i+1,x2,dum);
-    //    if (i==0)            x3=x1;
-    //    else                 g2->GetPoint(i-1,x3,dum);
-
     Double_t eyh=0., eyl=0.;
-    //if (y1<y2) {y2=y1; y1=tmp;}
-    //Double_t y3=1.;
 
-    //printf("%d: y1=%f y2=%f Eyhigh= %f Eylow= %f \n",i,y1,y2,EYhigh[i],EYlow[i]);
 
     y0=y1-y2;
-    if(m_dbg) cout << "bin " << i << endl;
+//     if(m_dbg) cout << "bin " << i << endl;
     if(m_dbg) cout << "AsymErrors= " << y2 << " transient = " << y1 <<  " diff= " << y0 << endl;
-//     cout << "y0= " << y0 << endl;
+
     if (y0!=0) {
      if (y0>0){
       eyh=EYhigh[i];
       eyh=std::sqrt(eyh*eyh+y0*y0);
-      //printf("high: %d: y0=%f eyh=%f  \n",i,y0,eyh);
+
       if(m_dbg) cout << "errorGraph set eyh from " << EYhigh[i];
       g2->SetPointEYhigh(i,eyh);
       if(m_dbg)  cout << " to " << eyh << endl;
      } else {
       eyl=EYlow[i];
       eyl=std::sqrt(eyl*eyl+y0*y0);
-      // printf("low: %d: y0=%f eyl=%f  \n",i,y0,eyl);
+      if(m_dbg) cout << "errorGraph set eyl from " << EYlow[i];
+      g2->SetPointEYlow (i,eyl);
+      if(m_dbg) cout << " to " << eyl << endl;
+     }
+    }
+  }
+  return;
+
+}
+
+void myAddtoBandLinCorr(TGraphAsymmErrors* g1, TGraphAsymmErrors* g2) {
+  bool m_dbg = false;
+
+  Double_t  x1=0., y1=0.,  y2=0., y0=0;
+
+  if (g1->GetN()!=g2->GetN())
+    std::cout << " graphs have not the same # of elements " << std::endl;
+
+  Double_t* EYhigh = g2-> GetEYhigh();
+  Double_t* EYlow  = g2-> GetEYlow();
+
+  for (Int_t i=0; i<g1->GetN(); i++) {
+    g1->GetPoint(i, x1,y1);
+    g2->GetPoint(i, x1,y2);
+
+    if (y1==0) y1=1;
+    if (y2==0) y2=1;
+
+    Double_t eyh=0., eyl=0.;
+
+
+    y0=y1-y2;
+    if(m_dbg) cout << "bin " << i << endl;
+    if(m_dbg) cout << "AsymErrors= " << y2 << " transient = " << y1 <<  " diff= " << y0 << endl;
+
+    if (y0!=0) {
+     if (y0>0){
+      eyh=EYhigh[i];
+//       eyh=std::sqrt(eyh*eyh+y0*y0);
+      eyh=eyh+std::fabs(y0);
+
+      if(m_dbg) cout << "errorGraph set eyh from " << EYhigh[i];
+      g2->SetPointEYhigh(i,eyh);
+      if(m_dbg)  cout << " to " << eyh << endl;
+     } else {
+      eyl=EYlow[i];
+//       eyl=std::sqrt(eyl*eyl+y0*y0);
+      eyl=eyl+std::fabs(y0);
       if(m_dbg) cout << "errorGraph set eyl from " << EYlow[i];
       g2->SetPointEYlow (i,eyl);
       if(m_dbg) cout << " to " << eyl << endl;

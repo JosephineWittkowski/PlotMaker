@@ -15,20 +15,21 @@ int main(int argc, char** argv)
 {
   // Read user inputs
   string channels     = "none"                               ; vector<string> channelList   ;
-  string regions      = "SR_MM_1jVR1"; vector<string> regionList    ;
+  string regions      = "SR_EE_1j"; vector<string> regionList    ;
   string variables    = "lept2Pt"                              ; vector<string> variableList  ;
   string samples      = 
 //   "ZV,WW,Top,Zjets,Higgs,Data"; 
-"SameSign,ChargeFlip,Higgs,Data";
+"SameSign,Data";
+// "SameSign,ChargeFlip,Higgs,Data";
   vector<string> sampleList    ;
-  string fakesamples  = "Fakes"; vector<string> fakesampleList    ;
+  string fakesamples  = ""; vector<string> fakesampleList    ;
   string signal       = "130.0_0.0"			    ; vector<string> signalList;
-  string binValues    = "40, 0, 200"                         ; vector<string> binValueList  ;
-   string MCsystematics  =  "EESZUP,EESZDOWN,EESMATUP,EESMATDOWN,EESPSUP,EESPSDOWN,EESLOWUP,EESLOWDOWN,EERUP,EERDOWN,MSUP,MSDOWN,IDUP,IDDOWN,JESUP,JESDOWN,JER,SCALESTUP,SCALESTDOWN,RESOST,syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_ESFUP,syst_ESFDOWN,syst_MEFFUP,syst_MEFFDOWN,syst_BJETUP,syst_BJETDOWN,syst_CJETUP,syst_CJETDOWN,syst_BMISTAGUP,syst_BMISTAGDOWN,syst_BMISTAGDOWN,syst_XSUP,syst_XSDOWN,syst_GENUP,syst_GENDOWN"; 
+  string binValues    = "1, 0, 200"                         ; vector<string> binValueList  ;
+   string MCsystematics  = "EESZUP,EESZDOWN,EERUP,EERDOWN,EESLOWUP,EESLOWDOWN,EESMATUP,EESMATDOWN,EESPSUP,EESPSDOWN,IDUP,IDDOWN,JESUP,JESDOWN,MSUP,MSDOWN,SCALESTUP,SCALESTDOWN,JER,RESOST,syst_BJETUP,syst_BJETDOWN,syst_CJETUP,syst_CJETDOWN,syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_BMISTAGUP,syst_BMISTAGDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_ESFUP,syst_ESFDOWN,syst_MEFFUP,syst_MEFFDOWN"; 
   vector<string> MCsystematicList;
+  string MCsystematicsCorrBg = "syst_XSUP,syst_XSDOWN,syst_GENUP,syst_GENDOWN"; vector<string> MCsystematicCorrBgList;
   
-  string fakesystematics =
-  "ELREUP,ELREDOWN,MUREUP,MUREDOWN,ELFRUP,ELFRDOWN,MUFRUP,MUFRDOWN";   
+  string fakesystematics =   "ELREUP,ELREDOWN,MUREUP,MUREDOWN,ELFRUP,ELFRDOWN,MUFRUP,MUFRDOWN,ELFRACDOWN,ELFRACUP,MUFRACDOWN,MUFRACUP";
   vector<string> fakesystematicList;
   
   float dataBlindCut = -1.;
@@ -50,7 +51,7 @@ int main(int argc, char** argv)
   
   //
 //   deltaEtaLl      L2METrel   lept1Eta  lept2Eta  jet1Pt  jet2Pt  jet3Pt 
-  bool show_Data = false;
+  bool show_Data = true;
   bool   convertToGeV = true;
   bool add_WZ_uncertainty = false;
   
@@ -109,6 +110,7 @@ int main(int argc, char** argv)
   tokenizeString(regions    ,regionList    );
   tokenizeString(variables  ,variableList  );
   tokenizeString(MCsystematics,MCsystematicList);
+  tokenizeString(MCsystematicsCorrBg,MCsystematicCorrBgList);
   tokenizeString(fakesystematics, fakesystematicList);
   tokenizeString(samples    ,sampleList    );
   tokenizeString(fakesamples  ,fakesampleList  );
@@ -119,12 +121,13 @@ int main(int argc, char** argv)
 
   // Plot and Save
   PlotMaker* plots = new PlotMaker();
-  plots->setInputFile("/data/etp/jwittkowski/hft_processed_May_19/hft_may_19_sscf/SSBG8TeV.root");
-  plots->setInputFileSignal("/data/etp/jwittkowski/hft_processed_May_19/hft_may_19_sscf/SSWH8TeV.root");
+  plots->setInputFile("/data/etp/jwittkowski/hft_processed_May_20/20140520/SSBG8TeV.root");
+  plots->setInputFileSignal("/data/etp/jwittkowski/hft_processed_May_20/20140520/SSWH8TeV.root");
   plots->setSignalList     (signalList    );
   plots->setSampleList     (sampleList    );
   plots->SetFakeSampleList (fakesampleList);
   plots->setMCSystematicsList(MCsystematicList);
+  plots->setMCSystematicsCorrBgList(MCsystematicCorrBgList);
   plots->setFakeSystematicsList(fakesystematicList);
   plots->setBinValuesList  (binValueList  );
   plots->setGeVFlag        (convertToGeV  );

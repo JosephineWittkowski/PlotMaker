@@ -38,7 +38,8 @@ TGraphAsymmErrors* myMakeBand(TGraphAsymmErrors* g0,
 			      TGraphAsymmErrors* g1,
 			      TGraphAsymmErrors* g2);
 
-void myAddtoBand(TGraphAsymmErrors* g1, TGraphAsymmErrors* g2);
+void myAddtoBandSquaredUncorr(TGraphAsymmErrors* g1, TGraphAsymmErrors* g2);
+void myAddtoBandLinCorr(TGraphAsymmErrors* g1, TGraphAsymmErrors* g2);
 
 TGraphAsymmErrors* TH1TOTGraph(TH1 *h1);
 
