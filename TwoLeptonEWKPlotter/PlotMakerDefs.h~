@@ -39,7 +39,7 @@ TS2TSMap RegionCuts = boost::assign::map_list_of
 
 ("SR_EE_1jVR0metRel"    , "*((!isOS || L2qFlipWeight!=1.0) && isEE   && L2nCentralLightJets==1 && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) && L2METrel<=55000.)")
 
-("SR_EE_23j"    , "*((!isOS || L2qFlipWeight!=1.0) && isEE   && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) && L2METrel>30000. && mljj<120000. && mtmax>100000.)")
+("SR_EE_23j"    , "*((!isOS || L2qFlipWeight!=1.0) && isEE   && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) && L2METrel>30000. && mljj<120000. && mtmax>110000.)")
 
 ("SR_EE_23jmljj"    , "*((!isOS || L2qFlipWeight!=1.0) && isEE   && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) && L2METrel>30000. && mljj>=120000. && mtmax>100000.)")
 
@@ -220,7 +220,7 @@ TS2TSMap RegionCuts = boost::assign::map_list_of
 ("SR_23jmljj"      , "*( ((!isOS || L2qFlipWeight!=1.0) && isEE   && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.)) && L2METrel>30000. && mtmax>100000.) || ((!isOS || L2qFlipWeight!=1.0) && isMUMU && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && Ht>220000.) || ((!isOS || L2qFlipWeight!=1.0) && isEMU  && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000. && (deltaEtaLl<1.5 && deltaEtaLl>-1.5) && Ht>200000. && mtmax>110000.)  && mljj>=120000.)")
 
 
-("SR_23jVR0"	, "*(( ((!isOS || L2qFlipWeight!=1.0) && isEE   && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.))) || ((!isOS || L2qFlipWeight!=1.0) && isMUMU && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000.) || ((!isOS || L2qFlipWeight!=1.0) && isEMU  && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000.)) && jet3Pt>0. )")
+("SR_23jVR0"	, "*(( ((!isOS || L2qFlipWeight!=1.0) && isEE   && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>20000. && !(L2Mll>(92000.-10000.) && L2Mll<(92000.+10000.))) || ((!isOS || L2qFlipWeight!=1.0) && isMUMU && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000.) || ((!isOS || L2qFlipWeight!=1.0) && isEMU  && (L2nCentralLightJets==2 || L2nCentralLightJets==3) && lept1Pt>30000. && lept2Pt>30000.)) )")
 
 ("SR_23jVR1"	, "*( ((!isOS || L2qFlipWeight!=1.0) && isEE   && (L2nCentralLightJets==2 || L2nCentralLightJets==3)) || ((!isOS || L2qFlipWeight!=1.0) && isMUMU && (L2nCentralLightJets==2 || L2nCentralLightJets==3)) || ((!isOS || L2qFlipWeight!=1.0) && isEMU  && (L2nCentralLightJets==2 || L2nCentralLightJets==3)) )")
 

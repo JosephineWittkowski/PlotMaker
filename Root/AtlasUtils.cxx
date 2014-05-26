@@ -228,7 +228,7 @@ TGraphAsymmErrors* myMakeBand(TGraphAsymmErrors* g0,
 
 void myAddtoBandSquaredUncorr(TGraphAsymmErrors* g1, TGraphAsymmErrors* g2) {
   //add the errors squared to g2:
-  bool m_dbg = true;
+  bool m_dbg = false;
 
   Double_t  x1=0., y1=0.,  y2=0., y0=0;
 
@@ -249,7 +249,7 @@ void myAddtoBandSquaredUncorr(TGraphAsymmErrors* g1, TGraphAsymmErrors* g2) {
 
 
     y0=y1-y2;
-//     if(m_dbg) cout << "bin " << i << endl;
+    if(m_dbg) cout << "point " << i << endl;
     if(m_dbg) cout << "AsymErrors= " << y2 << " transient = " << y1 <<  " diff= " << y0 << endl;
 
     if (y0!=0) {

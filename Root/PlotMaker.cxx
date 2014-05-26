@@ -42,7 +42,7 @@ PlotMaker::~PlotMaker()
 void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 {
   
-  m_dbg = true;
+  m_dbg = false;
   m_eventyield = true;
   m_table = false;
   
@@ -360,30 +360,84 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 
     // Loop over samples and add to total systematics histo
     for(unsigned int j=0; j < m_sampleList.size(); ++j) {      
-//       cout << m_sampleList.at(j) << " nominal " << histograms[j]->Integral(0, -1) << endl;
+
       if(m_sampleList.at(j) != "Fakes"){
 	if(sysHistograms[j]!=NULL){
 	  if(m_dbg) cout << m_sampleList.at(j) << " " << m_MCsystematicsList.at(i) << " Integral " << sysHistograms[j]->Integral(0,-1) << " diff " << fabs(sysHistograms[j]->Integral(0,-1) - histograms[j]->Integral(0, -1)) << endl;
-	  totalSysHistoBg->Add(sysHistograms[j]);
+	  
+	  
+//####################################################################################################################################3	  
+	  //if XS or GEN: add error quadratically by looping over all bins, not linearly like with TH1D->Add()
+	  if(m_MCsystematicsList.at(i) == "syst_XSUP" || m_MCsystematicsList.at(i) == "syst_XSDOWN"|| m_MCsystematicsList.at(i) == "syst_GENUP" || m_MCsystematicsList.at(i) == "syst_GENDOWN"){
+	    double totalSysHistoBgYield = 0.;
+	    for(int k=1; k<sysHistograms[j]->GetNbinsX()+1; k++){
+	      
+	      //save what was in there already before:
+	      totalSysHistoBgYield = totalSysHistoBg->GetBinContent(k);
+	      //if ChargeFlip or Higgs, use 100% error (or, almost 100%):
+	      if((m_sampleList.at(j) == "ChargeFlip" || m_sampleList.at(j) == "Higgs") && (m_MCsystematicsList.at(i) == "syst_GENUP" || m_MCsystematicsList.at(i) == "syst_GENDOWN")){
+		double error_100Percent = 1.99*histograms[j]->GetBinContent(k) - histograms[j]->GetBinContent(k);
+		if(m_dbg) cout << "error = " << error_100Percent << endl;
+		//add the error quadratically to the previous errors, not linearly:
+
+		if(m_MCsystematicsList.at(i) == "syst_GENUP"){
+		  totalSysHistoBg->SetBinContent( k, sqrt(pow(totalSysHistoBgYield,2) + pow(error_100Percent,2)) );
+		}
+		if(m_MCsystematicsList.at(i) == "syst_GENDOWN"){
+		  totalSysHistoBg->SetBinContent( k, sqrt(pow(totalSysHistoBgYield,2) + pow(error_100Percent,2)) );
+		}
+	      }
+	      
+	      else{
+		if(m_MCsystematicsList.at(i) == "syst_GENUP" || m_MCsystematicsList.at(i) == "syst_XSUP"){
+		  totalSysHistoBg->SetBinContent( k, sqrt(pow(totalSysHistoBgYield,2) + pow(sysHistograms[j]->GetBinContent(k) - histograms[j]->GetBinContent(k),2)) );
+		}
+		if(m_MCsystematicsList.at(i) == "syst_GENDOWN" || m_MCsystematicsList.at(i) == "syst_XSDOWN"){
+		  totalSysHistoBg->SetBinContent( k, sqrt(pow(totalSysHistoBgYield,2) + pow(sysHistograms[j]->GetBinContent(k) - histograms[j]->GetBinContent(k),2)) );
+		}
+		
+	      }
+	    }
+	  }
+	  
+//####################################################################################################################################3	  
+	  else{
+	    if(m_dbg) cout << "totalSysHistoBg->Add(sysHistograms[j]);" << endl;
+	    totalSysHistoBg->Add(sysHistograms[j]);
+	    
+	  }
+
 	}
 	else if ( m_sampleList.at(j) != "Data") {
 	  cout << "PlotMaker::WARNING   Cannot find TTree for systematics " << 
 		  m_MCsystematicsList.at(i) << " for sample " << m_sampleList.at(j)  << endl;
 	}
       }
+      if(m_dbg) cout << "for " << m_sampleList.at(j) << " totalSysHistoBg->Integral(0,-1)= " << totalSysHistoBg->Integral(0,-1) << endl;
     }
 
     //2) add for each individual sys the difference to the nominal value to yhigh or ylow with myAddtoBandSquaredUncorr. Original TGraphAsymmErrors 'nominalAsymErrorsMCBg': deduced from stack histo -> includes statistical error of all MC histos.
     
     //All MC BG (correlated-> use TH1D, linear) SYS (uncorrelated -> use myAddtoBandSquaredUncorr(), squared)
-
-      transientMcBg = TH1TOTGraph(totalSysHistoBg);
-      if(m_MCsystematicsList.at(i) == "syst_XSUP" || m_MCsystematicsList.at(i) == "syst_XSDOWN"|| m_MCsystematicsList.at(i) == "syst_GENUP" || m_MCsystematicsList.at(i) == "syst_GENDOWN"){
-// 	if(m_dbg) cout << "add linearly" << endl;
-	myAddtoBandLinCorr(transientMcBg,nominalAsymErrorsMCBg);
+    
+//       if(m_dbg)cout << "totalSysHistoBg->GetBinContent(8)= " << totalSysHistoBg->GetBinContent(8) << endl;
+//       if(m_dbg)cout << "totalSysHistoBg->GetBinContent(9)= " << totalSysHistoBg->GetBinContent(9) << endl;
+//       if(m_dbg)cout << "totalSysHistoBg->GetBinContent(10)= " << totalSysHistoBg->GetBinContent(10) << endl;
+      if(m_MCsystematicsList.at(i) == "syst_XSUP" || m_MCsystematicsList.at(i) == "syst_GENUP"){
+	for(int k=1; k<stackHistoMCBg->GetNbinsX()+1; k++){
+	  if(m_dbg) cout << "totalSysHistoBg->SetBinContent( k, totalSysHistoBg->GetBinContent(k) + stackHistoMCB->GetBinContent(k)); " << totalSysHistoBg->GetBinContent(k) + stackHistoMCBg->GetBinContent(k) << endl;
+	  totalSysHistoBg->SetBinContent( k, totalSysHistoBg->GetBinContent(k) + stackHistoMCBg->GetBinContent(k));
+	}
       }
-      //add the errors squared to nominalAsymErrorsMCBg:
-      else myAddtoBandSquaredUncorr(transientMcBg,nominalAsymErrorsMCBg);
+      
+      if(m_MCsystematicsList.at(i) == "syst_XSDOWN"|| m_MCsystematicsList.at(i) == "syst_GENDOWN"){
+	for(int k=1; k<stackHistoMCBg->GetNbinsX()+1; k++){
+	  if(m_dbg)cout << "totalSysHistoBg->SetBinContent( k, stackHistoMCBg->GetBinContent(k) - totalSysHistoBg->GetBinContent(k)); " << stackHistoMCBg->GetBinContent(k) - totalSysHistoBg->GetBinContent(k) << endl;
+	  totalSysHistoBg->SetBinContent( k, stackHistoMCBg->GetBinContent(k) - totalSysHistoBg->GetBinContent(k));
+	}
+      }
+      transientMcBg = TH1TOTGraph(totalSysHistoBg);
+      myAddtoBandSquaredUncorr(transientMcBg,nominalAsymErrorsMCBg);
       totalSysHistoBg->Reset();
 
   }
@@ -556,7 +610,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   else histograms_signal[0]->GetYaxis()->SetRangeUser(2.e-2,stackMCBg->GetMaximum()*3.5);
 
 //   if(m_show_data) gPad->RedrawAxis();
-//   gPad->SetLogy(1);
+  gPad->SetLogy(1);
 
   // Decoration
   char annoyingLabel1[100] = "#bf{#it{ATLAS}} Internal", annoyingLabel2[100] = "#scale[0.6]{#int} L dt = 20.3 fb^{-1} #sqrt{s} = 8 TeV";
@@ -631,11 +685,11 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   
 
 
-  TString plotName = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_May_20.pdf" ;
-  TString plotNameeps = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_May_20.eps" ;
+  TString plotName = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_May_20test.pdf" ;
+  TString plotNameeps = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_May_20test.eps" ;
   //plotName = dirOut + "/" + plotName;
-//   canvas->SaveAs(plotName);
-//   canvas->SaveAs(plotNameeps);
+  canvas->SaveAs(plotName);
+  canvas->SaveAs(plotNameeps);
 
   // Delete unnecessary stuff to open up memory
   //delete[] histograms;
@@ -847,12 +901,12 @@ void PlotMaker::buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors*
   float EYHigh = 0.;
   float EYLow = 0.;
   for(int bin=0; bin < output->GetN(); bin++){ 
-//     if(m_dbg) cout << "bin " << bin << endl;
+    if(m_dbg) cout << "bin " << bin << endl;
     output->GetY()[bin] = 1.; 
     
     if( fabs(input->GetY()[bin]) > 0.0001 ) {
       output->GetEYhigh()[bin]=input->GetEYhigh()[bin] /input->GetY()[bin]; 
-//       if(m_dbg || m_eventyield) cout << "$^{+ " << input->GetEYhigh()[bin]  << "} "; 
+      if(m_dbg || m_eventyield) cout << "$^{+ " << input->GetEYhigh()[bin]  << "} "; 
       EYHigh += input->GetEYhigh()[bin];
     }
    else 
@@ -861,7 +915,7 @@ void PlotMaker::buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors*
    if( fabs(input->GetY()[bin]) > 0.0001 ){
 
       output->GetEYlow()[bin]=input->GetEYlow()[bin]/input->GetY()[bin]; 
-//       if(m_dbg || m_eventyield) cout << "_{- " << input->GetEYlow()[bin]  << "}$ \\\\" << endl;     
+      if(m_dbg || m_eventyield) cout << "_{- " << input->GetEYlow()[bin]  << "}$ \\\\" << endl;     
       EYLow += input->GetEYlow()[bin];
       
    }
