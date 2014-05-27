@@ -65,11 +65,8 @@ class PlotMaker {
     void           setGeVFlag(bool arg) { m_converToGeV = arg;  };
     bool           getGeVFlag(        ) { return m_converToGeV; };         
     
-    /// \brief Set-Get Functions for WZ Flag
-    void           setWZFlag(bool arg) { m_addWZuncert = arg;  };
-    bool           getWZFlag(        ) { return m_addWZuncert; };
-    
-    /// \brief Set-Get Functions for WZ Flag
+
+    /// \brief Set-Get Functions for Data blinding cut
     void           setDataBlindCut(float arg) { m_dataBlindCut = arg;  };
     bool           getDataBlindCut(        ) { return m_dataBlindCut; };  
     
@@ -119,7 +116,6 @@ class PlotMaker {
     vector<string> m_fakesystematicsList;
     vector<string> m_binValuesList;
     bool           m_converToGeV;
-    bool           m_addWZuncert;
     float          m_dataBlindCut;
     string m_largersmaller;
     TH1D* m_fakeHistogram;
@@ -127,7 +123,6 @@ class PlotMaker {
     TH1D* m_SSHistogram;
     bool m_dbg;
     bool m_eventyield;
-    double m_WZSysUncert;
     double m_table;
     bool m_show_data;
 };

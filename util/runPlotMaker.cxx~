@@ -5,6 +5,27 @@
 
 #include "TwoLeptonEWKPlotter/PlotMaker.h"
 
+//set setInputFile, setInputFileSignal to correct paths
+
+//regions: chose from list in PlotMakerDefs.h
+
+//set variable to plot
+
+//set binning
+
+//activate all systematics. Attention: systematics for XS and GEN are added correlated (linearly). Systematics for fake are treated differently but added uncorrelated in the endl
+
+//dataBlindCut: how should data be blinded?
+
+//show_Data: set to false when looking into SignalRegion or if there is no cut on the variable but signal contamination is too high.
+
+//convertToGeV: set to true except for jet1Pt, jet2Pt, jet3Pt and of course eta distributions
+
+//set m_dbg, m_eventyield and m_table in PlotMaker.cxx
+  
+//in /cmt, make -f Makefile.RootCore; runPlotMaker
+
+
 using namespace std;
 
 void tokenizeString(string input, vector<string> &result);
@@ -15,7 +36,7 @@ int main(int argc, char** argv)
 {
   // Read user inputs
   string channels     = "none"                               ; vector<string> channelList   ;
-  string regions      = "SR_EE_23j"; vector<string> regionList    ;
+  string regions      = "SR_MM_EE1j"; vector<string> regionList    ;
   string variables    = "Ht"                              ; vector<string> variableList  ;
   string samples      = 
 //   "ZV,WW,Top,Zjets,Higgs,Data"; 
@@ -26,11 +47,11 @@ int main(int argc, char** argv)
   string signal       = "130.0_0.0"			    ; vector<string> signalList;
   string binValues    = "1, 0, 400"                         ; vector<string> binValueList  ;
    string MCsystematics  = 
-//    "";
+//    "IDDOWN";
   "EESZUP,EESZDOWN,EERUP,EERDOWN,EESLOWUP,EESLOWDOWN,EESMATUP,EESMATDOWN,EESPSUP,EESPSDOWN,IDUP,IDDOWN,JESUP,JESDOWN,MSUP,MSDOWN,SCALESTUP,SCALESTDOWN,JER,RESOST,syst_BJETUP,syst_BJETDOWN,syst_CJETUP,syst_CJETDOWN,syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_BMISTAGUP,syst_BMISTAGDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_ESFUP,syst_ESFDOWN,syst_MEFFUP,syst_MEFFDOWN"; 
   vector<string> MCsystematicList;
   string MCsystematicsCorrBg = 
-//   "syst_GENUP,syst_GENDOWN";
+//   "";
   "syst_XSUP,syst_XSDOWN,syst_GENUP,syst_GENDOWN"; 
   vector<string> MCsystematicCorrBgList;
   
@@ -56,21 +77,9 @@ int main(int argc, char** argv)
   
   //
 //   deltaEtaLl      L2METrel   lept1Eta  lept2Eta  jet1Pt  jet2Pt  jet3Pt 
-  bool show_Data = true;
+  bool show_Data = false;
   bool   convertToGeV = true;
-  bool add_WZ_uncertainty = false;
-  
-//   "  EESZUP,EESZDOWN,EESMATUP,EESMATDOWN,EESPSUP,EESPSDOWN,EESLOWUP,EESLOWDOWN,EERUP,EERDOWN,MSUP,MSDOWN,IDUP,IDDOWN,JESUP,JESDOWN,JER,SCALESTUP,SCALESTDOWN,RESOST,syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_ESFUP,syst_ESFDOWN,syst_MEFFUP,syst_MEFFDOWN,syst_BJETUP,syst_BJETDOWN,syst_CJETUP,syst_CJETDOWN,syst_BMISTAGUP,syst_BMISTAGDOWN,syst_BMISTAGDOWN,syst_XSUP,syst_XSDOWN"
-  //Problematic, don't include:s
-  
-//   "SR_EE_1j,SR_EE_23j,SR_MM_1j,SR_MM_23j,SR_EM_1j,SR_EM_23j"
-  
-//   "Higgs,Top,WW,ZV,Zjets,Data"
-  
-// "ELREUP,ELREDOWN,MUREUP,MUREDOWN,ELFRUP,ELFRDOWN,MUFRUP,MUFRDOWN"
-  
-//   
-  
+   
 
   for(int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "--channels") == 0)
@@ -106,7 +115,6 @@ int main(int argc, char** argv)
   cout << "Signal         = " << signal      << endl;
   cout << "Bin Values      = " << binValues    << endl;
   cout << "Convert to GeV  = " << convertToGeV << endl;
-  cout << "add WZ uncertainty of 17.4% " << add_WZ_uncertainty << endl;
   cout << "show data: " << show_Data << endl;
   cout << "=======================================================" << endl;
 
@@ -136,7 +144,6 @@ int main(int argc, char** argv)
   plots->setFakeSystematicsList(fakesystematicList);
   plots->setBinValuesList  (binValueList  );
   plots->setGeVFlag        (convertToGeV  );
-  plots->setWZFlag 	   (add_WZ_uncertainty);
   plots->setDataBlindCut   (dataBlindCut);
   plots->setLargerSmaller(largerSmaller);
   plots->setShowData(show_Data);
