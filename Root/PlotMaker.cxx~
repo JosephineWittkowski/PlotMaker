@@ -540,7 +540,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   histograms[dataIndex]->GetXaxis()->SetLabelOffset(1.2); 
   histograms[dataIndex]->GetXaxis()->SetLabelSize(0.03);
   histograms[dataIndex]->GetYaxis()->SetTitle(ylabel); 
-  //if not plotting data, another histogram is the first one to plot and will be used as reference for SetRangeUser.
+  //if not plotting data, another histogram is the first one to plot and will be used as reference for SetRangeUser (and only this one, other don't have influence on the range...).
   if(m_show_data) histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,histograms[dataIndex]->GetMaximum()*3.5);
   else histograms_signal[0]->GetYaxis()->SetRangeUser(2.e-2,stackMCBg->GetMaximum()*3.5);
 

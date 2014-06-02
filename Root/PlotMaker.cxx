@@ -621,8 +621,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   TString plotName = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_May_20test1.pdf" ;
   TString plotNameeps = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_May_20test1.eps" ;
   //plotName = dirOut + "/" + plotName;
-  canvas->SaveAs(plotName);
-  canvas->SaveAs(plotNameeps);
+//   canvas->SaveAs(plotName);
+//   canvas->SaveAs(plotNameeps);
 
   // Delete unnecessary stuff to open up memory
   //delete[] histograms;

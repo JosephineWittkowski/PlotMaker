@@ -36,7 +36,7 @@ int main(int argc, char** argv)
 {
   // Read user inputs
   string channels     = "none"                               ; vector<string> channelList   ;
-  string regions      = "SR_MM_EE1j"; vector<string> regionList    ;
+  string regions      = "SR_EE_23j"; vector<string> regionList    ;
   string variables    = "Ht"                              ; vector<string> variableList  ;
   string samples      = 
 //   "ZV,WW,Top,Zjets,Higgs,Data"; 
