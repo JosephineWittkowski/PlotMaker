@@ -42,7 +42,7 @@ PlotMaker::~PlotMaker()
 void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 {
   
-  m_dbg = true;
+  m_dbg = false;
   m_eventyield = true;
   m_table = false;
   
