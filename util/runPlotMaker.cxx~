@@ -36,18 +36,18 @@ int main(int argc, char** argv)
 {
   // Read user inputs
   string channels     = "none"                               ; vector<string> channelList   ;
-  string regions      = "SR_EE_23j"; vector<string> regionList    ;
-  string variables    = "Ht"                              ; vector<string> variableList  ;
+  string regions      = "SR_EM_1j"; vector<string> regionList    ;
+  string variables    = "lept1Pt"                              ; vector<string> variableList  ;
   string samples      = 
 //   "ZV,WW,Top,Zjets,Higgs,Data"; 
-// "SameSign,ChargeFlip,Data";
+// "ChargeFlip,Data";
 "SameSign,ChargeFlip,Higgs,Data";
   vector<string> sampleList    ;
   string fakesamples  = "Fakes"; vector<string> fakesampleList    ;
   string signal       = "130.0_0.0"			    ; vector<string> signalList;
-  string binValues    = "1, 0, 400"                         ; vector<string> binValueList  ;
+  string binValues    = "1, 0, 200"                         ; vector<string> binValueList  ;
    string MCsystematics  = 
-//    "IDDOWN";
+//    "";
   "EESZUP,EESZDOWN,EERUP,EERDOWN,EESLOWUP,EESLOWDOWN,EESMATUP,EESMATDOWN,EESPSUP,EESPSDOWN,IDUP,IDDOWN,JESUP,JESDOWN,MSUP,MSDOWN,SCALESTUP,SCALESTDOWN,JER,RESOST,syst_BJETUP,syst_BJETDOWN,syst_CJETUP,syst_CJETDOWN,syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_BMISTAGUP,syst_BMISTAGDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_ESFUP,syst_ESFDOWN,syst_MEFFUP,syst_MEFFDOWN"; 
   vector<string> MCsystematicList;
   string MCsystematicsCorrBg = 
@@ -77,7 +77,7 @@ int main(int argc, char** argv)
   
   //
 //   deltaEtaLl      L2METrel   lept1Eta  lept2Eta  jet1Pt  jet2Pt  jet3Pt 
-  bool show_Data = false;
+  bool show_Data = true;
   bool   convertToGeV = true;
    
 
@@ -134,8 +134,8 @@ int main(int argc, char** argv)
 
   // Plot and Save
   PlotMaker* plots = new PlotMaker();
-  plots->setInputFile("/data/etp/jwittkowski/hft_processed_May_20/20140520/SSBG8TeV.root");
-  plots->setInputFileSignal("/data/etp/jwittkowski/hft_processed_May_20/20140520/SSWH8TeV.root");
+  plots->setInputFile("/data/etp/jwittkowski/hft_processed_May_28/SSBG8TeV.root");
+  plots->setInputFileSignal("/data/etp/jwittkowski/hft_processed_May_28/SSWH8TeV.root");
   plots->setSignalList     (signalList    );
   plots->setSampleList     (sampleList    );
   plots->SetFakeSampleList (fakesampleList);

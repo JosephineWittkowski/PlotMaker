@@ -64,7 +64,10 @@ TGraphErrors* myTGraphErrorsDivide(TGraphErrors* g1,TGraphErrors* g2) {
      else        g3->SetPoint(iv, x1,y2);
    
      Double_t e=0.;
-     if (y1!=0 && y2!=0) e=std::sqrt(dy1*dy1+dy2*dy2)*(y1/y2); 
+     if (y1!=0 && y2!=0){
+       e=std::sqrt(dy1*dy1+dy2*dy2)*(y1/y2); 
+//        cout << "iv= " << iv << " y1= " << x1 << " dy1= " << dy1 << " dy2= " << dy2 << " e= " << e << endl;
+     }
      g3->SetPointError(iv,dx1,e);
 
 
@@ -242,8 +245,8 @@ void myAddtoBandSquaredUncorr(TGraphAsymmErrors* g1, TGraphAsymmErrors* g2) {
     g1->GetPoint(i, x1,y1);
     g2->GetPoint(i, x1,y2);
 
-    if (y1==0) y1=1;
-    if (y2==0) y2=1;
+//     if (y1==0) y1=1;
+//     if (y2==0) y2=1;
 
     Double_t eyh=0., eyl=0.;
 
@@ -322,7 +325,7 @@ void myAddtoBandLinCorr(TGraphAsymmErrors* g1, TGraphAsymmErrors* g2) {
 }
 
 TGraphAsymmErrors* TH1TOTGraph(TH1 *h1){
-
+bool m_dbg = false;
 
   if (!h1) std::cout << "TH1TOTGraph: histogram not found !" << std::endl;
 
@@ -348,6 +351,7 @@ TGraphAsymmErrors* TH1TOTGraph(TH1 *h1){
    x=h1->GetBinCenter(i);
   ex=h1->GetBinWidth(i)/2.;
    g1->SetPoint(i-1,x,y);
+   if(m_dbg) cout << "TH1TOTGraph: point" << i-1 << " x " << x << " y " << y << endl;
    g1->SetPointError(i-1,ex,ex,ey,ey);
  }
 

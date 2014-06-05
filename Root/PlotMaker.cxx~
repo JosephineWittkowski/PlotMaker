@@ -42,7 +42,7 @@ PlotMaker::~PlotMaker()
 void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 {
   
-  m_dbg = false;
+  m_dbg = true;
   m_eventyield = true;
   m_table = false;
   
@@ -156,19 +156,21 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   legend->SetTextSize(0.027);
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
-  std::cout.precision(8);
+  std::cout.precision(2);
   cout << fixed;
   // Get signal histogram(s)
   TH1D    *histograms_signal[m_signalList.size()];
   getHistograms(m_signalROOTFile, observable, cut, finalDataBlindCut, histograms_signal,"CENTRAL", m_signalList);
   if(m_eventyield) cout << "region " << region << " \\\\" << endl;
   //set style for signal sample(s)
+  double error_signal = 0.;
   for(unsigned int i=0; i<m_signalList.size(); ++i) {
     histograms_signal[i]->SetLineWidth(4);
     histograms_signal[i]->SetLineColor(kPink+7);
     histograms_signal[i]->SetLineStyle(5);
-
-    if(m_eventyield) cout << "Signal : " << histograms_signal[i]->Integral() << " \\\\" << endl;  
+    
+    histograms_signal[i]->IntegralAndError(0,-1,error_signal);
+    if(m_eventyield) cout << "Signal : " << histograms_signal[i]->Integral(0,-1) << " +\- " << error_signal << " \\\\" << endl;  
   }
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -205,7 +207,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   if(m_table) cout << cutflowstage << " & " ;
   for(unsigned int i=0; i<m_sampleList.size(); ++i) {
     // Add to stack if background
-    if((m_dbg || m_eventyield) && (m_sampleList.at(i)!="Data" || (m_dataBlindCut>-1. && m_show_data))) cout << m_sampleList.at(i) << " : " << histograms[i]->Integral(0, -1) << " \\\\" << endl;
+    if((m_dbg || m_eventyield) && (m_sampleList.at(i)!="Data" || (/*m_dataBlindCut>-1. &&*/ m_show_data))) cout << m_sampleList.at(i) << " : " << histograms[i]->Integral(0, -1) << " \\\\" << endl;
     if(m_table && (m_sampleList.at(i)!="Data")) histograms[i]->IntegralAndError(0, -1, error_on_integral);
     if(m_table && (m_sampleList.at(i)!="Data")) cout << histograms[i]->IntegralAndError(0, -1, error_on_integral) << " $\\pm$ " << error_on_integral;;
     if(m_table && i < m_sampleList.size()-2  && (m_sampleList.at(i)!="Data")) cout << " & ";
@@ -306,6 +308,10 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 	  cout << "bin " << bin << " Y= " << AsymmErrorsFake->GetY()[bin] <<  " + " << AsymmErrorsFake->GetEYhigh()[bin] << " - " << AsymmErrorsFake->GetEYlow()[bin] << endl;
       }
     }
+    cout << "only statistical error on all backgrounds:" << endl;
+    for(int bin=0; bin < nominalAsymmErrorsBg->GetN(); bin++){ 
+      cout << "bin " << bin << " Y= " << nominalAsymmErrorsBg->GetY()[bin] <<  " + " << nominalAsymmErrorsBg->GetEYhigh()[bin] << " - " << nominalAsymmErrorsBg->GetEYlow()[bin] << endl;
+  }
   
     cout << endl;
     cout << endl;
@@ -355,16 +361,16 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 	      totalSysHistoBgYield = totalSysHistoBg->GetBinContent(k);
 	      
 	      //if ChargeFlip or Higgs, use 100% error (or, almost 100%):
-	      if((m_sampleList.at(j) == "ChargeFlip" || m_sampleList.at(j) == "Higgs") && (m_MCsystematicsList.at(i) == "syst_GENUP" || m_MCsystematicsList.at(i) == "syst_GENDOWN")){
-		double error_100Percent = 1.99*histograms[j]->GetBinContent(k) - histograms[j]->GetBinContent(k);
-		if(m_dbg) cout << "error = " << error_100Percent << endl;
-		//add the error quadratically to the previous errors, not linearly:
-		totalSysHistoBg->SetBinContent( k, sqrt(pow(totalSysHistoBgYield,2) + pow(error_100Percent,2)) );
-	      }
+// 	      if((m_sampleList.at(j) == "ChargeFlip" || m_sampleList.at(j) == "Higgs") && (m_MCsystematicsList.at(i) == "syst_GENUP" || m_MCsystematicsList.at(i) == "syst_GENDOWN")){
+// 		double error_100Percent = 1.99*histograms[j]->GetBinContent(k) - histograms[j]->GetBinContent(k);
+// 		if(m_dbg) cout << "error = " << error_100Percent << endl;
+// 		//add the error quadratically to the previous errors, not linearly:
+// 		totalSysHistoBg->SetBinContent( k, sqrt(pow(totalSysHistoBgYield,2) + pow(error_100Percent,2)) );
+// 	      }
 	      
-	      else{
+// 	      else{
 		totalSysHistoBg->SetBinContent( k, sqrt(pow(totalSysHistoBgYield,2) + pow(sysHistograms[j]->GetBinContent(k) - histograms[j]->GetBinContent(k),2)) );
-	      }
+// 	      }
 	    }
 	  }
 	  
@@ -541,7 +547,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   histograms[dataIndex]->GetXaxis()->SetLabelSize(0.03);
   histograms[dataIndex]->GetYaxis()->SetTitle(ylabel); 
   //if not plotting data, another histogram is the first one to plot and will be used as reference for SetRangeUser (and only this one, other don't have influence on the range...).
-  if(m_show_data) histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,histograms[dataIndex]->GetMaximum()*3.5);
+  if(m_show_data) histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,histograms[dataIndex]->GetMaximum()*3.5); //*1000 if logscale
   else histograms_signal[0]->GetYaxis()->SetRangeUser(2.e-2,stackMCBg->GetMaximum()*3.5);
 
 //   gPad->SetLogy(1);
@@ -595,6 +601,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     ratio_raw->GetPoint(kk, x1,y1);
     if(y1 > 0.) {
       ratio->SetPoint(newIndex, x1, y1);
+      if(m_dbg) cout << " point " << kk << " y1= " << y1 << " ratio_raw->GetErrorYlow(kk)= " << ratio_raw->GetErrorYlow(kk) << " ratio_raw->GetErrorYhigh(kk)= " << ratio_raw->GetErrorYhigh(kk) << endl;
       ratio->SetPointError(newIndex, ratio_raw->GetErrorXlow(kk), ratio_raw->GetErrorXhigh(kk), ratio_raw->GetErrorYlow(kk), ratio_raw->GetErrorYhigh(kk));
       newIndex++;
     }
@@ -618,11 +625,11 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   
 
 
-  TString plotName = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_May_20test1.pdf" ;
-  TString plotNameeps = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_May_20test1.eps" ;
+  TString plotName = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_May_28.pdf" ;
+  TString plotNameeps = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_May_28.eps" ;
   //plotName = dirOut + "/" + plotName;
-  canvas->SaveAs(plotName);
-  canvas->SaveAs(plotNameeps);
+//   canvas->SaveAs(plotName);
+//   canvas->SaveAs(plotNameeps);
 
   // Delete unnecessary stuff to open up memory
   //delete[] histograms;
@@ -834,7 +841,7 @@ void PlotMaker::buildRatioErrorBand(TGraphAsymmErrors* input, TGraphAsymmErrors*
   float EYHigh = 0.;
   float EYLow = 0.;
   for(int bin=0; bin < output->GetN(); bin++){ 
-    if(m_dbg) cout << "bin " << bin << endl;
+    if(m_dbg) cout << "bin " << bin << " ratio " << input->GetY()[bin] << endl;
     output->GetY()[bin] = 1.; 
     
     if( fabs(input->GetY()[bin]) > 0.0001 ) {
