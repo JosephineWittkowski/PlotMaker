@@ -55,7 +55,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   sprintf(buffer, "%f", m_dataBlindCut);
   DataBlindCut.append(buffer);
   TString finalDataBlindCut = "";
-  if(m_dataBlindCut>0.) finalDataBlindCut = DataBlindCut;
+//   if(m_dataBlindCut>0.) finalDataBlindCut = DataBlindCut;
 
   //for printing the table based on HFT's:
   TString cutflowstage = "\\mlj{} , \\mljj{}";
@@ -245,6 +245,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   if(m_show_data) legend->AddEntry(Data,SampleNames["Data"],"p");
   for(unsigned int i=0; i<m_fakesampleList.size(); ++i) {
     stackBg->Add(fakehistograms[i]);
+//     cout << "stackBg->Add(fakehistograms[i]);" << endl;
     if(m_dbg || m_eventyield) cout << m_fakesampleList.at(i) << " : " << fakehistograms[i]->Integral(0, -1) << " \\\\" << endl;
     if(m_table) fakehistograms[i]->IntegralAndError(0, -1, error_on_integral);
     if(m_table) cout << " & " << fakehistograms[i]->IntegralAndError(0, -1, error_on_integral) << " $\\pm$ " << error_on_integral;
@@ -286,9 +287,22 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   nominalAsymmErrorsBg->SetFillStyle(3004);
   nominalAsymmErrorsBg->SetFillColor(kBlack);
   
-  TH1D* stackHistoMCBg = (TH1D*) stackMCBg->GetStack()->Last();
+  TH1D* stackHistoMCBg; 
 
-  TGraphAsymmErrors* nominalAsymErrorsMCBg = TH1TOTGraph(stackHistoMCBg);
+//   if there is MC bg to be included:
+  TGraphAsymmErrors* nominalAsymErrorsMCBg;
+  if(m_sampleList.size()>1){
+//     cout << "in if(m_sampleList.size()>1){" << endl;
+    stackHistoMCBg = (TH1D*) stackMCBg->GetStack()->Last();
+    nominalAsymErrorsMCBg = TH1TOTGraph(stackHistoMCBg);
+  }
+  else{
+    //else: use an empty TGraphAsymmErrors, based on stackBg
+    stackHistoMCBg = stackHistoBg;
+    stackHistoMCBg->Reset();
+    nominalAsymErrorsMCBg = TH1TOTGraph(stackHistoMCBg);
+  }
+  
   if(m_dbg) cout << "nominalAsymErrorsMCBg->GetY()[0]= " << nominalAsymErrorsMCBg->GetY()[0] << endl;
   nominalAsymErrorsMCBg->SetMarkerSize(0);
   nominalAsymErrorsMCBg->SetLineWidth(2);
@@ -332,6 +346,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   TH1D    *sysHistograms[m_sampleList.size()];
   
   for(unsigned int i=0; i < m_MCsystematicsList.size(); ++i) {
+//     cout << "loop over systematics MC" << endl;
 
     // Retrieve the syshistograms
     getHistograms(m_inputROOTFile, observable, cut, finalDataBlindCut, sysHistograms, m_MCsystematicsList.at(i), m_sampleList);
@@ -348,7 +363,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 	    }
 	  }
 	  
-	  if(m_dbg) cout << m_sampleList.at(j) << " " << m_MCsystematicsList.at(i) << " Integral " << sysHistograms[j]->Integral(0,-1) << " diff " << fabs(sysHistograms[j]->Integral(0,-1) - histograms[j]->Integral(0, -1)) << endl;
+// 	  if(m_dbg) cout << m_sampleList.at(j) << " " << m_MCsystematicsList.at(i) << " Integral " << sysHistograms[j]->Integral(0,-1) << " diff " << fabs(sysHistograms[j]->Integral(0,-1) - histograms[j]->Integral(0, -1)) << endl;
 	  
 	  
 //####################################################################################################################################3	  
@@ -359,24 +374,14 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 	      
 	      //save what was in there already before:
 	      totalSysHistoBgYield = totalSysHistoBg->GetBinContent(k);
-	      
-	      //if ChargeFlip or Higgs, use 100% error (or, almost 100%):
-// 	      if((m_sampleList.at(j) == "ChargeFlip" || m_sampleList.at(j) == "Higgs") && (m_MCsystematicsList.at(i) == "syst_GENUP" || m_MCsystematicsList.at(i) == "syst_GENDOWN")){
-// 		double error_100Percent = 1.99*histograms[j]->GetBinContent(k) - histograms[j]->GetBinContent(k);
-// 		if(m_dbg) cout << "error = " << error_100Percent << endl;
-// 		//add the error quadratically to the previous errors, not linearly:
-// 		totalSysHistoBg->SetBinContent( k, sqrt(pow(totalSysHistoBgYield,2) + pow(error_100Percent,2)) );
-// 	      }
-	      
-// 	      else{
-		totalSysHistoBg->SetBinContent( k, sqrt(pow(totalSysHistoBgYield,2) + pow(sysHistograms[j]->GetBinContent(k) - histograms[j]->GetBinContent(k),2)) );
-// 	      }
+
+	      totalSysHistoBg->SetBinContent( k, sqrt(pow(totalSysHistoBgYield,2) + pow(sysHistograms[j]->GetBinContent(k) - histograms[j]->GetBinContent(k),2)) );
 	    }
 	  }
 	  
 //####################################################################################################################################3	  
 	  else{
-	    if(m_dbg) cout << "totalSysHistoBg->Add(sysHistograms[j]);" << endl;
+// 	    if(m_dbg) cout << "totalSysHistoBg->Add(sysHistograms[j]);" << endl;
 	    totalSysHistoBg->Add(sysHistograms[j]);
 	    
 	  }
@@ -418,7 +423,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   // 3) to include stat error of fake histos, use myTGraphErrorsAdd() method to add fake_histo (= stat errors) to 'nominalAsymErrorsMCBg'.
     if(m_fakesampleList.size() > 0){
       TGraphAsymmErrors* nominalAsymmErrorsFake = TH1TOTGraph(m_fakeHistogram);
-      //   add linearly the yield of g2 to g1; add the errors squared:
+      //   add in quadrature the  statistical errors:
       myTGraphErrorsAdd(nominalAsymErrorsMCBg,nominalAsymmErrorsFake );
       if(m_dbg) cout << "after adding fake stat error: nominalAsymErrorsMCBg->GetY()[0]= " << nominalAsymErrorsMCBg->GetY()[0] << endl;
       vector<TH1D*> FakeUpDnHistograms;
@@ -625,11 +630,11 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   
 
 
-  TString plotName = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_May_28.pdf" ;
-  TString plotNameeps = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_May_28.eps" ;
+  TString plotName = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_July_10.pdf" ;
+  TString plotNameeps = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_July_10.eps" ;
   //plotName = dirOut + "/" + plotName;
-//   canvas->SaveAs(plotName);
-//   canvas->SaveAs(plotNameeps);
+  canvas->SaveAs(plotName);
+  canvas->SaveAs(plotNameeps);
 
   // Delete unnecessary stuff to open up memory
   //delete[] histograms;

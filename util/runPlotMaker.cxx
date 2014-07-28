@@ -36,16 +36,16 @@ int main(int argc, char** argv)
 {
   // Read user inputs
   string channels     = "none"                               ; vector<string> channelList   ;
-  string regions      = "SR_EM_23j"; vector<string> regionList    ;
-  string variables    = "lept1Pt"                              ; vector<string> variableList  ;
+  string regions      = "SR_1jNOHt"; vector<string> regionList    ;
+  string variables    = "Ht"                              ; vector<string> variableList  ;
   string samples      = 
-//   "ZV,WW,Top,Zjets,Higgs,Data"; 
-// "ChargeFlip,Data";
-"SameSign,ChargeFlip,Higgs,Data";
+  "ZV,WW,Top,Zjets,Higgs,Data"; 
+// "Higgs,Data";
+// "SameSign,ChargeFlip,Higgs,Data";
   vector<string> sampleList    ;
   string fakesamples  = "Fakes"; vector<string> fakesampleList    ;
   string signal       = "130.0_0.0"			    ; vector<string> signalList;
-  string binValues    = "1, 0, 200"                         ; vector<string> binValueList  ;
+  string binValues    = "25, 0, 500"                         ; vector<string> binValueList  ;
    string MCsystematics  = 
 //    "";
   "EESZUP,EESZDOWN,EERUP,EERDOWN,EESLOWUP,EESLOWDOWN,EESMATUP,EESMATDOWN,EESPSUP,EESPSDOWN,IDUP,IDDOWN,JESUP,JESDOWN,MSUP,MSDOWN,SCALESTUP,SCALESTDOWN,JER,RESOST,syst_BJETUP,syst_BJETDOWN,syst_CJETUP,syst_CJETDOWN,syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_BMISTAGUP,syst_BMISTAGDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_ESFUP,syst_ESFDOWN,syst_MEFFUP,syst_MEFFDOWN"; 
@@ -63,10 +63,8 @@ int main(int argc, char** argv)
 //   largerSmaller = " >= "; dataBlindCut = 90000.; //mlj
 //     largerSmaller = " >= "; dataBlindCut = 120000.; // mljj
 
-//     largerSmaller = " <= "; dataBlindCut = 200000.; // Ht
-//     largerSmaller = " <= "; dataBlindCut = 220000.; // Ht MM 23 jets
-//       largerSmaller = " <= "; dataBlindCut = 100000.; // mtmax
-//         largerSmaller = " <= "; dataBlindCut = 110000.; // mtmax EM
+    largerSmaller = " <= "; dataBlindCut = 200000.; // Ht
+//         largerSmaller = " <= "; dataBlindCut = 110000.; // mtmax 
 //         largerSmaller = " <= "; dataBlindCut = 120000.; // mWWT = mtllmet
 //         largerSmaller = " <= "; dataBlindCut = 30000.; // lept1Pt
 //         largerSmaller = " <= "; dataBlindCut = 20000.; // lept2Pt
@@ -134,8 +132,8 @@ int main(int argc, char** argv)
 
   // Plot and Save
   PlotMaker* plots = new PlotMaker();
-  plots->setInputFile("/data/etp/jwittkowski/hft_processed_May_28/SSBG8TeV.root");
-  plots->setInputFileSignal("/data/etp/jwittkowski/hft_processed_May_28/SSWH8TeV.root");
+  plots->setInputFile("/data/etp/jwittkowski/hft_processed_July_10/20140710/SSBG8TeV.root");
+  plots->setInputFileSignal("/data/etp/jwittkowski/hft_processed_July_10/20140710/SSWH8TeV.root");
   plots->setSignalList     (signalList    );
   plots->setSampleList     (sampleList    );
   plots->SetFakeSampleList (fakesampleList);
