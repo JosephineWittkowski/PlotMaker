@@ -150,10 +150,11 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   int binWidth = ( atoi(m_binValuesList.at(2).c_str()) - atoi(m_binValuesList.at(1).c_str()) ) / atoi(m_binValuesList.at(0).c_str()); 
   
   // Build the legend
-  TLegend* legend        = new TLegend(0.63,0.6,0.9,0.9);
+  TLegend* legend        = new TLegend(0.66,0.52,0.92,0.92);
   legend->SetBorderSize(0);
   legend->SetFillColor(0);
-  legend->SetTextSize(0.027);
+  legend->SetTextFont(42);
+  legend->SetTextSize(0.035);
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
   std::cout.precision(2);
@@ -474,9 +475,9 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // Draw the canvas
-  TCanvas* canvas = new TCanvas("canvas","canvas",500,500);
-  TPad*    topPad = new TPad("pTop","pTop",0,0.2,1,1);
-  TPad*    botPad = new TPad("pBot","pBot",0,0.0,1,0.3);
+  TCanvas* canvas = new TCanvas("canvas","canvas",700,500);
+  TPad*    topPad = new TPad("pTop","pTop",0,0.23,1,1);
+  TPad*    botPad = new TPad("pBot","pBot",0,0.0,1,0.31);
   topPad->Draw();
   botPad->Draw();
 
@@ -504,7 +505,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   }
   
   TArrow* arrow;
-  if(!variable.Contains("Eta")) arrow = new TArrow(m_dataBlindCut/1000.,0,m_dataBlindCut/1000.,histograms[dataIndex]->GetMaximum()/1.5,0.03,"<|");
+  if(!variable.Contains("Eta")) arrow = new TArrow(m_dataBlindCut/1000.,0,m_dataBlindCut/1000.,histograms[dataIndex]->GetMaximum()/1.2,0.03,"<|");
   else arrow = new TArrow(m_dataBlindCut,0,m_dataBlindCut,histograms[dataIndex]->GetMaximum()/1.5,0.03,"<|");
   arrow->SetLineWidth(6);
   arrow->SetAngle(40);
@@ -549,19 +550,21 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   }
   histograms[dataIndex]->GetXaxis()->SetTitle(xlabel); 
   histograms[dataIndex]->GetXaxis()->SetLabelOffset(1.2); 
-  histograms[dataIndex]->GetXaxis()->SetLabelSize(0.03);
+//   histograms[dataIndex]->GetXaxis()->SetLabelSize(0.03);
   histograms[dataIndex]->GetYaxis()->SetTitle(ylabel); 
+  histograms[dataIndex]->GetYaxis()->SetLabelSize(0.05); 
+  histograms[dataIndex]->GetYaxis()->SetTitleSize(0.05);
   //if not plotting data, another histogram is the first one to plot and will be used as reference for SetRangeUser (and only this one, other don't have influence on the range...).
-  if(m_show_data) histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,histograms[dataIndex]->GetMaximum()*3.5); //*1000 if logscale
+  if(m_show_data) histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,histograms[dataIndex]->GetMaximum()*2.7); //*1000 if logscale
   else histograms_signal[0]->GetYaxis()->SetRangeUser(2.e-2,stackMCBg->GetMaximum()*3.5);
 
 //   gPad->SetLogy(1);
 
   // Decoration
   char annoyingLabel1[100] = "#bf{#it{ATLAS}} Internal", annoyingLabel2[100] = "#scale[0.6]{#int} L dt = 20.3 fb^{-1} #sqrt{s} = 8 TeV";
-  myText(0.184,0.83,kBlack,annoyingLabel1);
-  myText(0.184,0.75,kBlack,annoyingLabel2);
-
+  myText(0.19,0.88,kBlack,annoyingLabel1);
+  myText(0.19,0.80,kBlack,annoyingLabel2);
+  topPad->RedrawAxis();
   // Bottom Pad
   botPad->cd();
   botPad->SetBottomMargin(0.3);
@@ -576,13 +579,13 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   ratio_original->SetLineWidth(2);
   ratio_original->GetXaxis()->SetTitle(xlabel);
   ratio_original->GetYaxis()->SetTitle("Data/SM");
-  ratio_original->GetXaxis()->SetLabelSize(0.1);
+  ratio_original->GetXaxis()->SetLabelSize(0.05/0.31*0.77);
   ratio_original->GetXaxis()->SetLabelOffset(0.02);
-  ratio_original->GetXaxis()->SetTitleSize(0.12);
+  ratio_original->GetXaxis()->SetTitleSize(0.05/0.31*0.77);
   ratio_original->GetXaxis()->SetTitleOffset(1.);
   ratio_original->GetYaxis()->SetRangeUser(0,2);
-  ratio_original->GetYaxis()->SetLabelSize(0.1);
-  ratio_original->GetYaxis()->SetTitleSize(0.12);
+  ratio_original->GetYaxis()->SetLabelSize(0.05/0.31*0.77);
+  ratio_original->GetYaxis()->SetTitleSize(0.05/0.31*0.77);
   ratio_original->GetYaxis()->SetTitleOffset(0.5);
   ratio_original->GetYaxis()->SetNdivisions(5);
 
@@ -627,11 +630,11 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   line          ->Draw();
   if(m_show_data) ratio         ->Draw("same && P");
   gPad          ->SetGridy(1);
-  
+  gPad->RedrawAxis();
 
 
-  TString plotName = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_July_10.pdf" ;
-  TString plotNameeps = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_July_10.eps" ;
+  TString plotName = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_July_10_cosmeticstest.pdf" ;
+  TString plotNameeps = "/data/etp3/jwittkow/analysis_SUSYTools_03_04_SusyNt_01_16/pics_KinematicPlotter/kinematics_" + region + "_" + variable + "_July_10_cosmeticstest.eps" ;
   //plotName = dirOut + "/" + plotName;
   canvas->SaveAs(plotName);
   canvas->SaveAs(plotNameeps);
