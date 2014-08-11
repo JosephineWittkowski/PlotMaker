@@ -36,8 +36,8 @@ int main(int argc, char** argv)
 {
   // Read user inputs
   string channels     = "none"                               ; vector<string> channelList   ;
-  string regions      = "SR_23jNOmljj"; vector<string> regionList    ;
-  string variables    = "mljj"                              ; vector<string> variableList  ;
+  string regions      = "SR_1jNOmtmax"; vector<string> regionList    ;
+  string variables    = "mtmax"                              ; vector<string> variableList  ;
   string samples      = 
   "ZV,WW,Top,Zjets,Higgs,Data"; 
 // "Higgs,Data";
@@ -46,23 +46,23 @@ int main(int argc, char** argv)
   string fakesamples  = "Fakes"; vector<string> fakesampleList    ;
   string signal       = "130.0_0.0"			    ; vector<string> signalList;
   string binValues    = "";
-  if(variables == "Ht") binValues =   "25, 0, 500"                         ; 
-  else if(variables == "mtmax") binValues =   "10, 0, 200"                         ; 
-  else if(variables == "mlj") binValues =   "15, 0, 450"                         ; 
+  if(variables == "Ht") binValues =   "8, 80, 400"                         ; 
+  else if(variables == "mtmax") binValues =   "9, 20, 200"                         ; 
+  else if(variables == "mlj") binValues =   "15, 0, 300"                         ; 
   else if(variables == "mljj") binValues =   "15, 0, 450"                         ; 
   vector<string> binValueList  ;
    string MCsystematics  = 
-   "";
-//   "EESZUP,EESZDOWN,EERUP,EERDOWN,EESLOWUP,EESLOWDOWN,EESMATUP,EESMATDOWN,EESPSUP,EESPSDOWN,IDUP,IDDOWN,JESUP,JESDOWN,MSUP,MSDOWN,SCALESTUP,SCALESTDOWN,JER,RESOST,syst_BJETUP,syst_BJETDOWN,syst_CJETUP,syst_CJETDOWN,syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_BMISTAGUP,syst_BMISTAGDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_ESFUP,syst_ESFDOWN,syst_MEFFUP,syst_MEFFDOWN"; 
+//    "";
+  "EESZUP,EESZDOWN,EERUP,EERDOWN,EESLOWUP,EESLOWDOWN,EESMATUP,EESMATDOWN,EESPSUP,EESPSDOWN,IDUP,IDDOWN,JESUP,JESDOWN,MSUP,MSDOWN,SCALESTUP,SCALESTDOWN,JER,RESOST,syst_BJETUP,syst_BJETDOWN,syst_CJETUP,syst_CJETDOWN,syst_BKGMETHODUP,syst_BKGMETHODDOWN,syst_BMISTAGUP,syst_BMISTAGDOWN,syst_ETRIGREWUP,syst_ETRIGREWDOWN,syst_MTRIGREWUP,syst_MTRIGREWDOWN,syst_ESFUP,syst_ESFDOWN,syst_MEFFUP,syst_MEFFDOWN"; 
   vector<string> MCsystematicList;
   string MCsystematicsCorrBg = 
 //   "";
-//   "syst_XSUP,syst_XSDOWN,syst_GENUP,syst_GENDOWN"; 
+  "syst_XSUP,syst_XSDOWN,syst_GENUP,syst_GENDOWN"; 
   vector<string> MCsystematicCorrBgList;
   
   string fakesystematics =   
-  "";
-//   "ELREUP,ELREDOWN,MUREUP,MUREDOWN,ELFRUP,ELFRDOWN,MUFRUP,MUFRDOWN,ELFRACDOWN,ELFRACUP,MUFRACDOWN,MUFRACUP";
+//   "";
+  "ELREUP,ELREDOWN,MUREUP,MUREDOWN,ELFRUP,ELFRDOWN,MUFRUP,MUFRDOWN,ELFRACDOWN,ELFRACUP,MUFRACDOWN,MUFRACUP";
   vector<string> fakesystematicList;
   
   float dataBlindCut = -1.;

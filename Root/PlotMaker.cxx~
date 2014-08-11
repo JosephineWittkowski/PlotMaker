@@ -149,12 +149,19 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   }
   int binWidth = ( atoi(m_binValuesList.at(2).c_str()) - atoi(m_binValuesList.at(1).c_str()) ) / atoi(m_binValuesList.at(0).c_str()); 
   
-  // Build the legend
-  TLegend* legend        = new TLegend(0.66,0.52,0.92,0.92);
-  legend->SetBorderSize(0);
-  legend->SetFillColor(0);
-  legend->SetTextFont(42);
-  legend->SetTextSize(0.035);
+  // Build the legendL
+  TLegend* legendL        = new TLegend(0.57,0.72,0.77,0.92);
+  legendL->SetBorderSize(0);
+  legendL->SetFillColor(0);
+  legendL->SetTextFont(42);
+  legendL->SetTextSize(0.035);
+  
+    // Build the legendR
+  TLegend* legendR        = new TLegend(0.775,0.76,0.92,0.92);
+  legendR->SetBorderSize(0);
+  legendR->SetFillColor(0);
+  legendR->SetTextFont(42);
+  legendR->SetTextSize(0.035);
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
   std::cout.precision(2);
@@ -243,14 +250,14 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
       Data->SetLineWidth(2);
     }
   }
-  if(m_show_data) legend->AddEntry(Data,SampleNames["Data"],"p");
+  if(m_show_data) legendL->AddEntry(Data,SampleNames["Data"],"p");
   for(unsigned int i=0; i<m_fakesampleList.size(); ++i) {
     stackBg->Add(fakehistograms[i]);
 //     cout << "stackBg->Add(fakehistograms[i]);" << endl;
     if(m_dbg || m_eventyield) cout << m_fakesampleList.at(i) << " : " << fakehistograms[i]->Integral(0, -1) << " \\\\" << endl;
     if(m_table) fakehistograms[i]->IntegralAndError(0, -1, error_on_integral);
     if(m_table) cout << " & " << fakehistograms[i]->IntegralAndError(0, -1, error_on_integral) << " $\\pm$ " << error_on_integral;
-    legend->AddEntry(fakehistograms[i],SampleNames["Fakes"],"f");
+    legendL->AddEntry(fakehistograms[i],SampleNames["Fakes"],"f");
   }
   
   for(unsigned int i=0; i<m_signalList.size(); ++i) {
@@ -258,10 +265,14 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     if(m_table) cout << " & " <<  histograms_signal[i]->IntegralAndError(0, -1, error_on_integral) << " $\\pm$ " << error_on_integral << " \\\\" << endl;  
   } 
 
-  // Add SM Background to legend
-  for(int i=m_sampleList.size()-1; i>-1 ; --i) {
+  // Add SM Background to legendL
+  for(int i=0; i<m_sampleList.size() ; i++) {
     if(m_sampleList.at(i)!="Data")
-      legend->AddEntry(histograms[i],SampleNames[m_sampleList.at(i)],"f");
+      
+      if(i<2)legendL->AddEntry(histograms[i],SampleNames[m_sampleList.at(i)],"f");
+      else legendR->AddEntry(histograms[i],SampleNames[m_sampleList.at(i)],"f");
+      if(i==3)legendL->AddEntry(histograms_signal[0],SampleNames["signal1"],"l");
+      
   }
     
 
@@ -335,9 +346,9 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   }
 
 
-  // Add SM Bkg. to the legend
-  legend->AddEntry(nominalAsymErrorsMCBg,"Bkg. Uncert.","f"); 
-  legend->AddEntry(histograms_signal[0],SampleNames["signal1"],"l");
+  // Add SM Bkg. to the legendL
+  legendR->AddEntry(nominalAsymErrorsMCBg,"Bkg. Uncert.","f"); 
+  
 
   // 1) loop over all sys errors and weighted event yields for MC bg, add to totalSysHistoBg (linear, stack, ==> correlated!)
   TH1D* totalSysHistoBg = (TH1D*) stackHistoMCBg->Clone();
@@ -493,7 +504,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     nominalAsymErrorsMCBg    ->Draw("same && E2");
     Data                 ->Draw("same && p");
     histograms_signal[0]->Draw("hists same");
-    legend               ->Draw();
+    legendL               ->Draw();
+    legendR               ->Draw();
   }
   else{
     histograms_signal[0]->Draw("hists");
@@ -501,7 +513,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     nominalAsymErrorsMCBg    ->Draw("same E2");
     histograms_signal[0]->Draw("hists same");
     
-    legend               ->Draw();
+    legendL               ->Draw();
+    legendR               ->Draw();
   }
   
   TArrow* arrow;
@@ -534,7 +547,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
     xlabel = "E_{T}^{miss,rel} [GeV]";
   }
   else if( variable.EqualTo("mtmax") ) {
-    xlabel = "max(m_{T}(l0), m_{T}(l1)) [GeV]";
+    xlabel = "m_{T}^{max}[GeV]";
   }
   else if( variable.EqualTo("ptl1") ) {
     xlabel = "p_{T,l1} [GeV]";
@@ -555,7 +568,7 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   histograms[dataIndex]->GetYaxis()->SetLabelSize(0.05); 
   histograms[dataIndex]->GetYaxis()->SetTitleSize(0.05);
   //if not plotting data, another histogram is the first one to plot and will be used as reference for SetRangeUser (and only this one, other don't have influence on the range...).
-  if(m_show_data) histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,histograms[dataIndex]->GetMaximum()*2.7); //*1000 if logscale
+  if(m_show_data) histograms[dataIndex]->GetYaxis()->SetRangeUser(2.e-2,histograms[dataIndex]->GetMaximum()*2.2); //*1000 if logscale
   else histograms_signal[0]->GetYaxis()->SetRangeUser(2.e-2,stackMCBg->GetMaximum()*3.5);
 
 //   gPad->SetLogy(1);
@@ -651,7 +664,8 @@ void PlotMaker::generatePlot(TString channel, TString region, TString variable)
   delete ratio_raw;
   delete ratio;
   delete totalSysHistoBg;
-  delete legend;
+  delete legendL;
+  delete legendR;
   delete canvas;
 
   return;

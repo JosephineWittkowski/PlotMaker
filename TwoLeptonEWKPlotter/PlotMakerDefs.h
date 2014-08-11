@@ -274,7 +274,7 @@ TS2TSMap SampleNames = boost::assign::map_list_of ("Data"  , "Data 2012"    )
                                                   ("Zjets" , "Z+jets"       )
                                                   ("ZV"    , "ZV"           )
                                                   ("Higgs" , "Higgs"        )
-                                                  ("Fakes" , "Fake leptons" )
+                                                  ("Fakes" , "Non-prompt leptons" )
 						  ("SameSign" , "SameSign" )
 						  ("ChargeFlip" , "ChargeFlip" )
 						  ("signal1", "(m_{#tilde{#chi}_{1}^{#pm}, #tilde{#chi}_{2}^{0}}, m_{#tilde{#chi}_{1}^{0}}) = (130,0) GeV");
